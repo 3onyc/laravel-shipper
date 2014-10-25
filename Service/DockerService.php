@@ -6,6 +6,8 @@ use Symfony\Component\Process\Process;
 use Illuminate\View\Factory;
 use Illuminate\Config\Repository;
 
+use RuntimeException;
+
 class DockerService
 {
     /**
@@ -58,7 +60,10 @@ class DockerService
         $fileContent = $this->view->make($view, $this->cfg)->render();
 
         if(file_put_contents($filePath, $fileContent) === false) {
-            throw new \Exception("Fail, TODO output");
+            throw new RuntimeException(sprintf(
+                "Failed to write Dockerfile, please check whether we have write permissions for '%s'",
+                base_path()
+            ));
         };
     }
 }
