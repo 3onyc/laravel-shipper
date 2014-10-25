@@ -28,14 +28,14 @@ class DockerService
         $this->cfg = $config->get('shipper::config');
     }
 
-    public function getName($env)
+    public function getImageName($env)
     {
         return sprintf("%s/%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
     }
 
     public function buildImage($env, $logFunc = null)
     {
-        $name = $this->getName($env);
+        $name = $this->getImageName($env);
 
         $proc = new Process(sprintf('docker build -t %s .', $name), base_path());
         $proc->setTimeout(null);
@@ -44,7 +44,7 @@ class DockerService
 
     public function hasImage($env)
     {
-        $name = $this->getName($env);
+        $name = $this->getImageName($env);
 
         $proc = new Process(sprintf("docker inspect %s", $name));
         $proc->run();
