@@ -47,6 +47,7 @@ class DockerService
         $name = $this->getImageName($env);
 
         $proc = new Process(sprintf("docker inspect %s", $name));
+        $proc->disableOutput();
         $proc->run();
 
         return $proc->getExitCode() === 0;
