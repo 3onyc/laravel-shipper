@@ -8,6 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use Symfony\Component\Process\Process;
 
+use x3tech\LaravelShipper\Service\DockerService;
+
 class BuildCommand extends Command
 {
     /**
@@ -35,18 +37,25 @@ class BuildCommand extends Command
     protected $config;
 
     /**
+     * @var x3tech\LaravelShipper\Service\DockerService
+     */
+    protected $docker;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
         \Illuminate\View\Factory $view,
-        \Illuminate\Config\Repository $config
+        \Illuminate\Config\Repository $config,
+        DockerService $docker
     ) {
         parent::__construct();
 
         $this->view = $view;
         $this->config = $config;
+        $this->docker = $docker;
     }
 
     /**
@@ -70,20 +79,13 @@ class BuildCommand extends Command
 
     protected function productionImageBuilt(array $cfg) {
         $imgName = sprintf('%s/%s-prod', $cfg['vendor'], $cfg['app']);
-        $proc = new Process("docker inspect " . $imgName);
-        $proc->run();
-
-        return $proc->getExitCode() === 0;
+        return $this->docker->hasImage($imgName);
     }
 
     protected function buildDockerImage(array $cfg, $env)
     {
-        $cmd = sprintf('docker build -t %s/%s-%s .', $cfg['vendor'], $cfg['app'], $env);
-
-        $proc = new Process($cmd, base_path());
-        $proc->setTimeout(null);
-
-        $proc->run(function ($type, $buffer) {
+        $imgName = sprintf('%s/%s-%s', $cfg['vendor'], $cfg['app'], $env);
+        $this->docker->buildImage($imgName, function ($type, $buffer) {
             $method = $type == Process::ERR ? 'error' : 'info';
             call_user_func([$this, $method], $buffer);
         });
