@@ -3,20 +3,62 @@ namespace x3tech\LaravelShipper\Service;
 
 use Symfony\Component\Process\Process;
 
+use Illuminate\View\Factory;
+use Illuminate\Config\Repository;
+
 class DockerService
 {
-    public function buildImage($name, $logFunc = null)
+    /**
+     * @var Illuminate\View\Factory
+     */
+    protected $view;
+
+    /**
+     * @var array
+     */
+    protected $cfg;
+
+    public function __construct(
+        \Illuminate\View\Factory $view,
+        \Illuminate\Config\Repository $config
+    ) {
+        $this->view = $view;
+        $this->cfg = $config->get('shipper::config');
+    }
+
+    public function getName($env)
     {
+        return sprintf("%s/%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
+    }
+
+    public function buildImage($env, $logFunc = null)
+    {
+        $name = $this->getName($env);
+
         $proc = new Process(sprintf('docker build -t %s .', $name), base_path());
         $proc->setTimeout(null);
         $proc->run($logFunc);
     }
 
-    public function hasImage($name)
+    public function hasImage($env)
     {
-        $proc = new Process("docker inspect " . $name);
+        $name = $this->getName($env);
+
+        $proc = new Process(sprintf("docker inspect %s", $name));
         $proc->run();
 
         return $proc->getExitCode() === 0;
+    }
+
+    public function createDockerFile($env)
+    {
+        $view = 'shipper::Dockerfile_' . $env;
+
+        $filePath = base_path() . '/Dockerfile';
+        $fileContent = $this->view->make($view, $this->cfg)->render();
+
+        if(file_put_contents($filePath, $fileContent) === false) {
+            throw new \Exception("Fail, TODO output");
+        };
     }
 }

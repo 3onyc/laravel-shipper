@@ -27,11 +27,6 @@ class BuildCommand extends Command
     protected $description = "Build development docker image";
 
     /**
-     * @var Illuminate\View\Factory
-     */
-    protected $view;
-
-    /**
      * @var Illuminate\Config\Repository
      */
     protected $config;
@@ -47,13 +42,11 @@ class BuildCommand extends Command
      * @return void
      */
     public function __construct(
-        \Illuminate\View\Factory $view,
         \Illuminate\Config\Repository $config,
         DockerService $docker
     ) {
         parent::__construct();
 
-        $this->view = $view;
         $this->config = $config;
         $this->docker = $docker;
     }
@@ -68,24 +61,18 @@ class BuildCommand extends Command
         $cfg = $this->config->get('shipper::config');
         $env = $this->argument('env');
 
-        if ($env === 'dev' && !$this->productionImageBuilt($cfg)) {
+        if ($env === 'dev' && !$this->docker->hasImage('prod')) {
             $this->info('Production image not found, building before dev');
             $this->call($this->name, array('env' => 'prod'));
         }
 
         $this->createDockerFile($cfg, $env);
-        $this->buildDockerImage($cfg, $env);
+        $this->buildDockerImage($env);
     }
 
-    protected function productionImageBuilt(array $cfg) {
-        $imgName = sprintf('%s/%s-prod', $cfg['vendor'], $cfg['app']);
-        return $this->docker->hasImage($imgName);
-    }
-
-    protected function buildDockerImage(array $cfg, $env)
+    protected function buildDockerImage($env)
     {
-        $imgName = sprintf('%s/%s-%s', $cfg['vendor'], $cfg['app'], $env);
-        $this->docker->buildImage($imgName, function ($type, $buffer) {
+        $this->docker->buildImage($env, function ($type, $buffer) {
             $method = $type == Process::ERR ? 'error' : 'info';
             call_user_func([$this, $method], $buffer);
         });
@@ -93,14 +80,7 @@ class BuildCommand extends Command
 
     protected function createDockerFile(array $cfg, $env)
     {
-        $viewName = 'shipper::Dockerfile_' . $env;
-        $dockerfilePath = base_path() . '/Dockerfile';
-
-        $dockerfileContent = $this->view->make($viewName, $cfg)->render();
-
-        if(file_put_contents($dockerfilePath, $dockerfileContent) === false) {
-            throw new \Exception("Fail, TODO output");
-        };
+        $this->docker->createDockerFile($env);
     }
 
     /**
