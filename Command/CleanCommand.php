@@ -5,6 +5,8 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use x3tech\LaravelShipper\Service\DockerService;
+
 class CleanCommand extends Command
 {
     /**
@@ -26,9 +28,12 @@ class CleanCommand extends Command
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(
+        DockerService $docker
+    ) {
         parent::__construct();
+
+        $this->docker = $docker;
     }
 
     /**
@@ -38,7 +43,24 @@ class CleanCommand extends Command
      */
     public function fire()
     {
-        //
+        if ($this->docker->hasContainer('dev')) {
+            $this->info("Deleting dev container...");
+            $this->docker->deleteContainer('dev');
+        }
+        if ($this->docker->hasContainer('prod')) {
+            $this->info("Deleting prod container...");
+            $this->docker->deleteContainer('prod');
+        }
+
+        if ($this->docker->hasImage('dev')) {
+            $this->info("Deleting dev image...");
+            $this->docker->deleteImage('dev');
+        }
+
+        if ($this->docker->hasImage('prod')) {
+            $this->info("Deleting prod image...");
+            $this->docker->deleteImage('prod');
+        }
     }
 
     /**

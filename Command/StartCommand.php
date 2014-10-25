@@ -19,7 +19,7 @@ class StartCommand extends Command
      *
      * @var string
      */
-    protected $description = "Create and start the development container";
+    protected $description = "Create and start the container for <env>";
 
     /**
      * Create a new command instance.

@@ -53,6 +53,20 @@ class DockerService
         return $proc->getExitCode() === 0;
     }
 
+    public function deleteImage($env)
+    {
+        $name = $this->getImageName($env, $force = true);
+
+        $proc = new Process(sprintf("docker rmi %s", $name));
+        $proc->run();
+
+        if ($proc->getExitCode() !== 0) {
+            throw new RuntimeException(
+                "Failed to delete image, stderr: " . $proc->getErrorOutput()
+            );
+        }
+    }
+
     public function createDockerFile($env)
     {
         $view = 'shipper::Dockerfile_' . $env;
@@ -66,5 +80,36 @@ class DockerService
                 base_path()
             ));
         };
+    }
+
+    public function getContainerName($env)
+    {
+        return sprintf("%s_%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
+    }
+
+    public function hasContainer($env)
+    {
+        $name = $this->getContainerName($env);
+
+        $proc = new Process(sprintf("docker inspect %s", $name));
+        $proc->disableOutput();
+        $proc->run();
+
+        return $proc->getExitCode() === 0;
+    }
+
+    public function deleteContainer($env, $force = true)
+    {
+        $name = $this->getContainerName($env);
+        $flags = $force ? '-f' : '';
+
+        $proc = new Process(sprintf("docker rm %s %s", $flags, $name));
+        $proc->run();
+
+        if ($proc->getExitCode() !== 0) {
+            throw new RuntimeException(
+                "Failed to delete container, stderr: " . $proc->getErrorOutput()
+            );
+        }
     }
 }
