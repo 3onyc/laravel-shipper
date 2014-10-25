@@ -1,0 +1,21 @@
+{
+    "name": "x3tech/laravel-shipper",
+    "description": "Integrate Docker into your Laravel development workflow",
+    "version": "0.0.0",
+    "type": "library",
+    "keywords": [ "laravel", "artisan", "docker" ],
+    "homepage": "https://github.com/3onyc/laravel-shipper",
+    "time": "2014-10-25",
+    "license": "MIT",
+    "authors": [{
+        "name": "3ony",
+        "email": "3onyc@x3tech.com",
+        "homepage": "https://github.com/3onyc",
+        "role": "Developer"
+    }],
+    "autoload": {
+        "psr-4": {
+            "x3tech\\LaravelShipper\\": ""
+        }
+    }
+}
