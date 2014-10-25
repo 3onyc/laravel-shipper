@@ -13,6 +13,11 @@
         "homepage": "https://github.com/3onyc",
         "role": "Developer"
     }],
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/process": "~2.5",
+        "illuminate/support": "4.2.*"
+    },
     "autoload": {
         "psr-4": {
             "x3tech\\LaravelShipper\\": ""

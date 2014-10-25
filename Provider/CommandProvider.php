@@ -3,8 +3,7 @@ namespace x3tech\LaravelShipper\Provider;
 
 use Illuminate\Support\ServiceProvider;
 
-use x3tech\LaravelShipper\Command\BuildDevCommand;
-use x3tech\LaravelShipper\Command\BuildProdCommand;
+use x3tech\LaravelShipper\Command\BuildCommand;
 use x3tech\LaravelShipper\Command\OpenWebCommand;
 use x3tech\LaravelShipper\Command\CleanCommand;
 use x3tech\LaravelShipper\Command\RunCommand;
@@ -14,12 +13,8 @@ class CommandProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            'laravel_shipper.command.build_dev',
-            'x3tech\LaravelShipper\Command\BuildDevCommand'
-        );
-        $this->app->bind(
-            'laravel_shipper.command.build_prod',
-            'x3tech\LaravelShipper\Command\BuildProdCommand'
+            'laravel_shipper.command.build',
+            'x3tech\LaravelShipper\Command\BuildCommand'
         );
         $this->app->bind(
             'laravel_shipper.command.start',
@@ -37,8 +32,9 @@ class CommandProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->commands('laravel_shipper.command.build_dev');
-        $this->commands('laravel_shipper.command.build_prod');
+        $this->package('x3tech/laravel-shipper', 'shipper', dirname(__DIR__));
+
+        $this->commands('laravel_shipper.command.build');
         $this->commands('laravel_shipper.command.start');
         $this->commands('laravel_shipper.command.stop');
         $this->commands('laravel_shipper.command.clean');
