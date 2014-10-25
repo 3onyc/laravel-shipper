@@ -24,7 +24,7 @@ class BuildCommand extends Command
      *
      * @var string
      */
-    protected $description = "Build development docker image";
+    protected $description = "Build docker image for <env>";
 
     /**
      * @var Illuminate\Config\Repository
