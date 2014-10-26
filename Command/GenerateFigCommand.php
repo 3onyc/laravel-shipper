@@ -140,6 +140,8 @@ class GenerateFigCommand extends Command
 
     protected function addQueue(array $structure)
     {
+        $env = $this->config->getEnvironment();
+        $cfg = $this->config->get('shipper::config');
         $default = $this->config->get('queue.default');
         $connections = $this->config->get('queue.connections');
         $connection = $connections[$default];
@@ -152,6 +154,27 @@ class GenerateFigCommand extends Command
                     'image' => 'kdihalas/beanstalkd',
                 );
                 break;
+        }
+
+        if ($connection['driver'] !== 'sync') {
+            $this->info("Adding queue worker...");
+            $structure['worker'] = array(
+                'build' => '.',
+                'command' => '/var/www/artisan queue:listen',
+                'environment' => array(
+                    'APP_ENV' => $env
+                ),
+                'links' => array('queue'),
+
+            );
+
+            if (in_array($env, $cfg['mount_volumes'])) {
+                $structure['worker']['volumes'] = array(
+                    '.:/var/www',
+                    './app/storage/logs/hhvm:/var/log/hhvm',
+                    './app/storage/logs/nginx:/var/log/nginx'
+                );
+            }
         }
 
         return $structure;
