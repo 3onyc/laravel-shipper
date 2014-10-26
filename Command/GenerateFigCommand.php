@@ -94,6 +94,8 @@ class GenerateFigCommand extends Command
     protected function addDependencies(array $structure)
     {
         $structure = $this->addDatabase($structure);
+        $structure = $this->addQueue($structure);
+
         return $structure;
     }
 
@@ -130,6 +132,25 @@ class GenerateFigCommand extends Command
                     )
                 );
                 $structure['web']['links'][] = 'db';
+                break;
+        }
+
+        return $structure;
+    }
+
+    protected function addQueue(array $structure)
+    {
+        $default = $this->config->get('queue.default');
+        $connections = $this->config->get('queue.connections');
+        $connection = $connections[$default];
+
+        switch ($connection['driver']) {
+            case 'beanstalkd':
+                $this->info("Adding beanstalkd dependency...");
+                $structure['web']['links'][] = 'queue';
+                $structure['queue'] = array(
+                    'image' => 'kdihalas/beanstalkd',
+                );
                 break;
         }
 
