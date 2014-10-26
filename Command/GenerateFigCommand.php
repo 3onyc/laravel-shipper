@@ -75,7 +75,8 @@ class GenerateFigCommand extends Command
         if (in_array($env, $cfg['mount_volumes'])) {
             $structure['web']['volumes'] = array(
                 '.:/var/www',
-                './app/storage/logs/dev:/var/log'
+                './app/storage/logs/hhvm:/var/log/hhvm',
+                './app/storage/logs/nginx:/var/log/nginx'
             );
         }
 
