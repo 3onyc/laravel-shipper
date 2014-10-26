@@ -1,4 +1,4 @@
-FROM {{ $vendor }}/{{ $app }}-prod
+FROM x3tech/nginx-hhvm
 MAINTAINER {{ $maintainer }}
 
 # Set user to 1000 so we can map it to logged in user

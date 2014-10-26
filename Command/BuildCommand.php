@@ -61,11 +61,6 @@ class BuildCommand extends Command
         $cfg = $this->config->get('shipper::config');
         $env = $this->argument('env');
 
-        if ($env === 'dev' && !$this->docker->hasImage('prod')) {
-            $this->info('Production image not found, building before dev');
-            $this->call($this->name, array('env' => 'prod'));
-        }
-
         $this->createDockerFile($cfg, $env);
         $this->buildDockerImage($env);
     }
