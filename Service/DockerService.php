@@ -29,11 +29,25 @@ class DockerService
         $this->cfg = $config->get('shipper::config');
     }
 
+    /**
+     * Return name of the image for $env
+     *
+     * @param string $env
+     *
+     * @return string
+     */
     public function getImageName($env)
     {
         return sprintf("%s/%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
     }
 
+    /**
+     * Build a Docker image for $env
+     *
+     * @param string   $env
+     * @param callable $logFunc Function to handle process output
+     *                          signature: func($type, $buffer)
+     */
     public function buildImage($env, $logFunc = null)
     {
         $name = $this->getImageName($env);
@@ -43,6 +57,11 @@ class DockerService
         $proc->run($logFunc);
     }
 
+    /**
+     * @param string $env
+     *
+     * @return bool Whether docker image exists
+     */
     public function hasImage($env)
     {
         $name = $this->getImageName($env);
@@ -54,6 +73,11 @@ class DockerService
         return $proc->getExitCode() === 0;
     }
 
+    /**
+     * @param string $env
+     *
+     * @throws RuntimeException When image deletion fails.
+     */
     public function deleteImage($env)
     {
         $name = $this->getImageName($env, $force = true);
@@ -68,6 +92,13 @@ class DockerService
         }
     }
 
+    /**
+     * Render a Dockerfile from the blade template for $env.
+     *
+     * @param string $env
+     *
+     * @throws RuntimeException When writing to the Dockerfile fails
+     */
     public function createDockerFile($env)
     {
         $view = 'shipper::Dockerfile_' . $env;
@@ -83,11 +114,25 @@ class DockerService
         };
     }
 
+    /**
+     * Return name of the container for $env
+     *
+     * @param string $env
+     *
+     * @return string
+     */
     public function getContainerName($env)
     {
         return sprintf("%s_%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
     }
 
+    /**
+     * @param string   $env
+     * @param callable $logFunc Function to handle process output
+     *                          signature: func($type, $buffer)
+     *
+     * @return bool Whether the process exited succesfully
+     */
     public function startContainer($env, $logFunc = null)
     {
         $process = (new ProcessBuilder())
@@ -104,6 +149,11 @@ class DockerService
         return $process->getExitCode() === 0;
     }
 
+    /**
+     * Ensure that the log directories for hhvm and nginx are created.
+     *
+     * Only used in 'dev'
+     */
     protected function ensureLogDirs()
     {
         $logBase = sprintf("%s/logs/dev", storage_path());
@@ -119,6 +169,13 @@ class DockerService
         }
     }
     
+    /**
+     * Returns the arguments for the 'docker' call startContainer
+     *
+     * @param string $env
+     *
+     * @return array
+     */
     protected function getStartArgs($env)
     {
         $image = $this->getImageName($env);
@@ -139,6 +196,11 @@ class DockerService
         return array_merge($args, array($image));
     }
 
+    /**
+     * @param string $env
+     *
+     * @return bool Whether Docker container exists
+     */
     public function hasContainer($env)
     {
         $name = $this->getContainerName($env);
@@ -150,6 +212,10 @@ class DockerService
         return $proc->getExitCode() === 0;
     }
 
+    /**
+     * @param string $env
+     * @param bool   $force Force container deletion (Stop+delete when running)
+     */
     public function deleteContainer($env, $force = true)
     {
         $name = $this->getContainerName($env);
