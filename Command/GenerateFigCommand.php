@@ -51,32 +51,35 @@ class GenerateFigCommand extends Command
         $cfg = $this->config->get('shipper::config');
         $env = $this->config->getEnvironment();
 
-        $this->info("Generating fig.yml...");
+        $this->info('Generating fig.yml...');
         $this->createFigYaml($cfg, $env);
     }
 
     protected function createFigYaml(array $cfg, $env)
     {
         $structure = array(
-            "web" => array(
-                "build" => ".",
-                "ports" => array(
-                    sprintf("%s:80", $cfg['port'])
+            'web' => array(
+                'build' => '.',
+                'ports' => array(
+                    sprintf('%s:80', $cfg['port'])
                 ),
-                "environment" => array(
-                    "APP_ENV" => $env
-                )
+                'environment' => array(
+                    'APP_ENV' => $env
+                ),
+                'links' => array()
             )
         );
 
+        $structure = $this->addDependencies($structure);
+
         if (in_array($env, $cfg['mount_volumes'])) {
-            $structure["web"]["volumes"] = array(
-                ".:/var/www",
-                "./app/storage/logs/dev:/var/log"
+            $structure['web']['volumes'] = array(
+                '.:/var/www',
+                './app/storage/logs/dev:/var/log'
             );
         }
 
-        $figPath = sprintf("%s/fig.yml", base_path());
+        $figPath = sprintf('%s/fig.yml', base_path());
         $figContents = Yaml::dump($structure, 3);
 
         if (file_put_contents($figPath, $figContents) === false) {
@@ -85,6 +88,37 @@ class GenerateFigCommand extends Command
                 base_path()
             ));
         }
+    }
+
+    protected function addDependencies(array $structure)
+    {
+        $structure = $this->addDatabase($structure);
+        return $structure;
+    }
+
+    protected function addDatabase(array $structure)
+    {
+        $default = $this->config->get('database.default');
+        $connections = $this->config->get('database.connections');
+        $connection = $connections[$default];
+
+        switch ($connection['driver']) {
+            case 'mysql':
+                $this->info("Adding MySQL dependency...");
+                $structure['db'] = array(
+                    'image' => 'x3tech/mysql',
+                    'environment' => array(
+                        'MYSQL_ROOT_PASSWORD' => $connection['password'],
+                        'MYSQL_DATABASE' => $connection['database'],
+                        'MYSQL_USER' => $connection['username'],
+                        'MYSQL_PASSWORD' => $connection['password']
+                    )
+                );
+                $structure['web']['links'][] = 'db';
+                break;
+        }
+
+        return $structure;
     }
 
     /**
