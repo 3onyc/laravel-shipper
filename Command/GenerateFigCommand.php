@@ -116,6 +116,20 @@ class GenerateFigCommand extends Command
                 );
                 $structure['web']['links'][] = 'db';
                 break;
+            case 'pgsql':
+                $this->info("Adding PostgreSQL dependency...");
+                $this->error("NOTE: PostgreSQL is currently unsupported by HHVM.");
+
+                $structure['db'] = array(
+                    'image' => 'orchardup/postgresql',
+                    'environment' => array(
+                        'POSTGRESQL_DB' => $connection['database'],
+                        'POSTGRESQL_USER' => $connection['username'],
+                        'POSTGRESQL_PASS' => $connection['password']
+                    )
+                );
+                $structure['web']['links'][] = 'db';
+                break;
         }
 
         return $structure;
