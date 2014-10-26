@@ -1,6 +1,7 @@
 <?php
 namespace x3tech\LaravelShipper\Service;
 
+use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Process\Process;
 
 use Illuminate\View\Factory;
@@ -85,6 +86,57 @@ class DockerService
     public function getContainerName($env)
     {
         return sprintf("%s_%s-%s", $this->cfg['vendor'], $this->cfg['app'], $env);
+    }
+
+    public function startContainer($env, $logFunc = null)
+    {
+        $process = (new ProcessBuilder())
+            ->setPrefix("docker")
+            ->setArguments($this->getStartArgs($env))
+            ->getProcess();
+
+        if ($env === "dev") {
+            $this->ensureLogDirs();
+        }
+
+        $process->run($logFunc);
+
+        return $process->getExitCode() === 0;
+    }
+
+    protected function ensureLogDirs()
+    {
+        $logBase = sprintf("%s/logs/dev", storage_path());
+        if (!is_dir($logBase)) {
+            mkdir($logBase, 0755);
+        }
+        
+        foreach (array("hhvm", "nginx") as $dir) {
+            $dirPath = sprintf("%s/%s", $logBase, $dir);
+            if (!is_dir($dirPath)) {
+                mkdir($dirPath, 0755);
+            }
+        }
+    }
+    
+    protected function getStartArgs($env)
+    {
+        $image = $this->getImageName($env);
+        $name = $this->getContainerName($env);
+
+        $args = array(
+            "run",
+            sprintf("--publish=%u:80", $this->cfg['port']),
+            sprintf("--name=%s", $name),
+            "--detach"
+        );
+        if ($env === "dev") {
+            $args = array_merge($args, array(
+                sprintf("--volume=%s:/var/www", base_path()),
+                sprintf("--volume=%s/app/storage/logs/dev:/var/log", base_path()),
+            ));
+        }
+        return array_merge($args, array($image));
     }
 
     public function hasContainer($env)
