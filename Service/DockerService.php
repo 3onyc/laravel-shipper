@@ -188,7 +188,7 @@ class DockerService
             sprintf("--env=APP_ENV=%s", $env),
             "--detach"
         );
-        if ($env === "dev") {
+        if (in_array($env, $this->cfg['mount_volumes'])) {
             $args = array_merge($args, array(
                 sprintf("--volume=%s:/var/www", base_path()),
                 sprintf("--volume=%s/app/storage/logs/dev:/var/log", base_path()),
