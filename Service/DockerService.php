@@ -185,6 +185,7 @@ class DockerService
             "run",
             sprintf("--publish=%u:80", $this->cfg['port']),
             sprintf("--name=%s", $name),
+            sprintf("--env=APP_ENV=%s", $env),
             "--detach"
         );
         if ($env === "dev") {
