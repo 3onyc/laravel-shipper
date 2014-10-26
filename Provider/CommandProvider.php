@@ -17,8 +17,8 @@ class CommandProvider extends ServiceProvider
             'x3tech\LaravelShipper\Command\BuildCommand'
         );
         $this->app->bind(
-            'laravel_shipper.command.start',
-            'x3tech\LaravelShipper\Command\StartCommand'
+            'laravel_shipper.command.run',
+            'x3tech\LaravelShipper\Command\RunCommand'
         );
         $this->app->bind(
             'laravel_shipper.command.stop',
@@ -35,7 +35,7 @@ class CommandProvider extends ServiceProvider
         $this->package('x3tech/laravel-shipper', 'shipper', dirname(__DIR__));
 
         $this->commands('laravel_shipper.command.build');
-        $this->commands('laravel_shipper.command.start');
+        $this->commands('laravel_shipper.command.run');
         $this->commands('laravel_shipper.command.stop');
         $this->commands('laravel_shipper.command.clean');
     }

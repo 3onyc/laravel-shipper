@@ -10,14 +10,14 @@ use Symfony\Component\Process\Process;
 
 use x3tech\LaravelShipper\Service\DockerService;
 
-class StartCommand extends Command
+class RunCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'docker:start';
+    protected $name = 'docker:run';
 
     /**
      * The console command description.
@@ -79,7 +79,7 @@ class StartCommand extends Command
                 "'%s' container started, you can now navigate to http://localhost:%u",
                 $env,
                 $this->config->get('shipper::config.port')
-            ));
+            )); 
         }
     }
 
