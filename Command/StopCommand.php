@@ -2,6 +2,8 @@
 namespace x3tech\LaravelShipper\Command;
 
 use Illuminate\Console\Command;
+use Illuminate\Config\Repository;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -29,16 +31,23 @@ class StopCommand extends Command
     protected $docker;
 
     /**
+     * @var Illuminate\Config\Repository
+     */
+    protected $config;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        DockerService $docker
+        DockerService $docker,
+        \illuminate\config\repository $config
     ) {
         parent::__construct();
 
         $this->docker = $docker;
+        $this->config = $config;
     }
 
     /**
@@ -48,7 +57,7 @@ class StopCommand extends Command
      */
     public function fire()
     {
-        $env = $this->argument('env');
+        $env = $this->config->getEnvironment();
         $this->info(sprintf("Deleting container for env '%s'...", $env));
 
         if (!$this->docker->hasContainer($env)) {
@@ -66,14 +75,7 @@ class StopCommand extends Command
      */
     protected function getArguments()
     {
-        return array(
-            array(
-                'env',
-                InputArgument::REQUIRED,
-                "Environment to build 'prod' or 'dev'",
-                null
-            ),
-        );
+        return array();
     }
 
     /**

@@ -58,12 +58,20 @@ class RunCommand extends Command
      */
     public function fire()
     {
-        $env = $this->argument('env');
+        $env = $this->config->getEnvironment();
         $this->info(sprintf("Starting container for env '%s'...", $env));
 
         if (!$this->docker->hasImage($env)) {
             $this->error(sprintf(
-                "No image for env '%1\$s' please run 'artisan docker:build %1\$s' first",
+                "No image for env '%s' please run 'artisan docker:build' first",
+                $env
+            ));
+            return;
+        }
+
+        if ($this->docker->hasContainer($env)) {
+            $this->error(sprintf(
+                "Container for env '%s' already running, run 'artisan docker:stop' first",
                 $env
             ));
             return;
@@ -90,14 +98,7 @@ class RunCommand extends Command
      */
     protected function getArguments()
     {
-        return array(
-            array(
-                'env',
-                InputArgument::REQUIRED,
-                "Environment to build 'prod' or 'dev'",
-                null
-            ),
-        );
+        return array();
     }
 
     /**

@@ -59,7 +59,7 @@ class BuildCommand extends Command
     public function fire()
     {
         $cfg = $this->config->get('shipper::config');
-        $env = $this->argument('env');
+        $env = $this->config->getEnvironment();
 
         $this->createDockerFile($cfg, $env);
         $this->buildDockerImage($env);
@@ -85,14 +85,7 @@ class BuildCommand extends Command
      */
     protected function getArguments()
     {
-        return array(
-            array(
-                'env',
-                InputArgument::REQUIRED,
-                "Environment to build 'prod' or 'dev'",
-                null
-            ),
-        );
+        return array();
     }
 
     /**

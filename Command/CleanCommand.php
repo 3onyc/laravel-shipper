@@ -2,6 +2,8 @@
 namespace x3tech\LaravelShipper\Command;
 
 use Illuminate\Console\Command;
+use Illuminate\Config\Repository;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
@@ -24,16 +26,23 @@ class CleanCommand extends Command
     protected $description = "Delete images and running containers";
 
     /**
+     * @var Illuminate\Config\Repository
+     */
+    protected $config;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        DockerService $docker
+        DockerService $docker,
+        \Illuminate\Config\Repository $config
     ) {
         parent::__construct();
 
         $this->docker = $docker;
+        $this->config = $config;
     }
 
     /**
@@ -43,24 +52,20 @@ class CleanCommand extends Command
      */
     public function fire()
     {
-        if ($this->docker->hasContainer('dev')) {
-            $this->info("Deleting dev container...");
-            $this->docker->deleteContainer('dev');
-        }
-        if ($this->docker->hasContainer('prod')) {
-            $this->info("Deleting prod container...");
-            $this->docker->deleteContainer('prod');
+        $env = $this->config->getEnvironment();
+        $this->info(sprintf("Cleaning env '%s'...", $env));
+
+        if ($this->docker->hasContainer($env)) {
+            $this->info(sprintf("Deleting '%s' container...", $env));
+            $this->docker->deleteContainer($env);
         }
 
-        if ($this->docker->hasImage('dev')) {
-            $this->info("Deleting dev image...");
-            $this->docker->deleteImage('dev');
+        if ($this->docker->hasImage($env)) {
+            $this->info(sprintf("Deleting '%s' image...", $env));
+            $this->docker->deleteImage($env);
         }
 
-        if ($this->docker->hasImage('prod')) {
-            $this->info("Deleting prod image...");
-            $this->docker->deleteImage('prod');
-        }
+        $this->info("Done...");
     }
 
     /**
