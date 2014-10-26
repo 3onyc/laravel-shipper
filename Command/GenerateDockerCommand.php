@@ -2,28 +2,29 @@
 namespace x3tech\LaravelShipper\Command;
 
 use Illuminate\Console\Command;
+use Illuminate\View\Factory;
 use Illuminate\Config\Repository;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-use x3tech\LaravelShipper\Service\DockerService;
+use RuntimeException;
 
-class CleanCommand extends Command
+class GenerateDockerCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'docker:clean';
+    protected $name = 'shipper:generate:docker';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Delete images and running containers";
+    protected $description = "Generate Dockerfile";
 
     /**
      * @var Illuminate\Config\Repository
@@ -31,18 +32,23 @@ class CleanCommand extends Command
     protected $config;
 
     /**
+     * @var Illuminate\View\Factory
+     */
+    protected $view;
+
+    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
-        DockerService $docker,
-        \Illuminate\Config\Repository $config
+        \Illuminate\Config\Repository $config,
+        \Illuminate\View\Factory $view
     ) {
         parent::__construct();
 
-        $this->docker = $docker;
         $this->config = $config;
+        $this->view = $view;
     }
 
     /**
@@ -52,20 +58,26 @@ class CleanCommand extends Command
      */
     public function fire()
     {
+        $cfg = $this->config->get('shipper::config');
         $env = $this->config->getEnvironment();
-        $this->info(sprintf("Cleaning env '%s'...", $env));
 
-        if ($this->docker->hasContainer($env)) {
-            $this->info(sprintf("Deleting '%s' container...", $env));
-            $this->docker->deleteContainer($env);
-        }
+        $this->info("Generating Dockerfile...");
+        $this->createDockerFile($cfg, $env);
+    }
 
-        if ($this->docker->hasImage($env)) {
-            $this->info(sprintf("Deleting '%s' image...", $env));
-            $this->docker->deleteImage($env);
-        }
+    protected function createDockerFile(array $cfg, $env)
+    {
+        $view = 'shipper::Dockerfile_' . $env;
 
-        $this->info("Done...");
+        $filePath = base_path() . '/Dockerfile';
+        $fileContent = $this->view->make($view, $cfg)->render();
+
+        if(file_put_contents($filePath, $fileContent) === false) {
+            throw new RuntimeException(sprintf(
+                "Failed to write Dockerfile, please check whether we have write permissions for '%s'",
+                base_path()
+            ));
+        };
     }
 
     /**

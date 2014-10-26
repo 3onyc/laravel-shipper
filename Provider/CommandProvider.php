@@ -13,20 +13,16 @@ class CommandProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            'laravel_shipper.command.build',
-            'x3tech\LaravelShipper\Command\BuildCommand'
+            'laravel_shipper.command.generate_fig',
+            'x3tech\LaravelShipper\Command\GenerateFigCommand'
         );
         $this->app->bind(
-            'laravel_shipper.command.run',
-            'x3tech\LaravelShipper\Command\RunCommand'
+            'laravel_shipper.command.generate_docker',
+            'x3tech\LaravelShipper\Command\GenerateDockerCommand'
         );
         $this->app->bind(
-            'laravel_shipper.command.stop',
-            'x3tech\LaravelShipper\Command\StopCommand'
-        );
-        $this->app->bind(
-            'laravel_shipper.command.clean',
-            'x3tech\LaravelShipper\Command\CleanCommand'
+            'laravel_shipper.command.generate_all',
+            'x3tech\LaravelShipper\Command\GenerateAllCommand'
         );
     }
 
@@ -34,9 +30,8 @@ class CommandProvider extends ServiceProvider
     {
         $this->package('x3tech/laravel-shipper', 'shipper', dirname(__DIR__));
 
-        $this->commands('laravel_shipper.command.build');
-        $this->commands('laravel_shipper.command.run');
-        $this->commands('laravel_shipper.command.stop');
-        $this->commands('laravel_shipper.command.clean');
+        $this->commands('laravel_shipper.command.generate_fig');
+        $this->commands('laravel_shipper.command.generate_docker');
+        $this->commands('laravel_shipper.command.generate_all');
     }
 }
