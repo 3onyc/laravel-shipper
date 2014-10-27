@@ -8,6 +8,11 @@ use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
 
 class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        $this->cfg = include __DIR__ . '/../../../config/config.php';
+    }
+
     /**
      * Create a FigDatabaseBuildStep and mock config with database driver $driver
      *
@@ -20,7 +25,7 @@ class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
             ->with('shipper::config')
-            ->andReturn(include __DIR__ . '/../../../config/config.php')
+            ->andReturn($this->cfg)
             ->shouldReceive('getEnvironment')
             ->andReturn('local')
             ->shouldReceive('get')
@@ -58,15 +63,10 @@ class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
                 'links' => array()
             )
         );
-        $volumes = array(
-            '.:/var/www',
-            './app/storage/logs/hhvm:/var/log/hhvm',
-            './app/storage/logs/nginx:/var/log/nginx'
-        );
 
         $structure = $this->getStep('beanstalkd')->run($input);
         $this->assertArrayHasKey('worker', $structure);
-        $this->assertEquals($volumes, $structure['worker']['volumes']);
+        $this->assertEquals($this->cfg['volumes'], $structure['worker']['volumes']);
     }
 
     public function testSync()

@@ -8,6 +8,11 @@ use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
 
 class FigApplicationBuildStepTest extends PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        $this->cfg = include __DIR__ . '/../../../config/config.php';
+    }
+
     /**
      * Create a FigApplicationBuildStep and mock config with environment $env
      *
@@ -22,7 +27,7 @@ class FigApplicationBuildStepTest extends PHPUnit_Framework_TestCase
             ->andReturn($env)
             ->shouldReceive('get')
             ->with('shipper::config')
-            ->andReturn(include __DIR__ . '/../../../config/config.php')
+            ->andReturn($this->cfg)
             ->getMock();
 
         return new FigApplicationBuildStep($config);
@@ -59,11 +64,7 @@ class FigApplicationBuildStepTest extends PHPUnit_Framework_TestCase
                 'environment' => array(
                     'APP_ENV' => 'local'
                 ),
-                'volumes' => array(
-                    '.:/var/www',
-                    './app/storage/logs/hhvm:/var/log/hhvm',
-                    './app/storage/logs/nginx:/var/log/nginx'
-                ),
+                'volumes' => $this->cfg['volumes'],
                 'links' => array()
             )
         );
