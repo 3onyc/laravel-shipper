@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 
+use x3tech\LaravelShipper\Builder\FigBuilder;
+
 class GenerateFigCommand extends Command
 {
     /**
@@ -34,11 +36,11 @@ class GenerateFigCommand extends Command
      * @return void
      */
     public function __construct(
-        \Illuminate\Config\Repository $config
+        FigBuilder $figBuilder
     ) {
         parent::__construct();
 
-        $this->config = $config;
+        $this->figBuilder = $figBuilder;
     }
 
     /**
@@ -48,37 +50,13 @@ class GenerateFigCommand extends Command
      */
     public function fire()
     {
-        $cfg = $this->config->get('shipper::config');
-        $env = $this->config->getEnvironment();
-
         $this->info('Generating fig.yml...');
-        $this->createFigYaml($cfg, $env);
+        $this->createFigYaml();
     }
 
-    protected function createFigYaml(array $cfg, $env)
+    protected function createFigYaml()
     {
-        $structure = array(
-            'web' => array(
-                'build' => '.',
-                'ports' => array(
-                    sprintf('%s:80', $cfg['port'])
-                ),
-                'environment' => array(
-                    'APP_ENV' => $env
-                ),
-                'links' => array()
-            )
-        );
-
-        $structure = $this->addDependencies($structure);
-
-        if (in_array($env, $cfg['mount_volumes'])) {
-            $structure['web']['volumes'] = array(
-                '.:/var/www',
-                './app/storage/logs/hhvm:/var/log/hhvm',
-                './app/storage/logs/nginx:/var/log/nginx'
-            );
-        }
+        $structure = $this->figBuilder->build();
 
         $figPath = sprintf('%s/fig.yml', base_path());
         $figContents = Yaml::dump($structure, 3);
