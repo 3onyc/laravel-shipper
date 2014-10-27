@@ -5,5 +5,4 @@
 * Make fig.yml objects (File itself, and containers) OOP for easier manipulation
 * Implement shipper:check command (For checking if configuration is correct)
 * Add config to toggle between HHVM and PHP
-* Create volume directories
 * Command for unit tests

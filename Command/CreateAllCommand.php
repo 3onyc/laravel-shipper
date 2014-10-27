@@ -20,7 +20,7 @@ class CreateAllCommand extends Command
      *
      * @var string
      */
-    protected $description = "Create Dockerfile and fig.yml";
+    protected $description = "Create Dockerfile, fig.yml and volume dirs";
 
     /**
      * Execute the console command.
@@ -31,6 +31,7 @@ class CreateAllCommand extends Command
     {
         $this->call('shipper:create:fig');
         $this->call('shipper:create:docker');
+        $this->call('shipper:create:dirs');
 
         $this->info("All done, call 'fig build && fig up' and start coding!");
     }

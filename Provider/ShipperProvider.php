@@ -5,6 +5,7 @@ use Illuminate\Support\ServiceProvider;
 
 use x3tech\LaravelShipper\Command\CreateFigCommand;
 use x3tech\LaravelShipper\Command\CreateDockerCommand;
+use x3tech\LaravelShipper\Command\CreateDirsCommand;
 use x3tech\LaravelShipper\Command\CreateAllCommand;
 
 use x3tech\LaravelShipper\Builder\FigBuilder;
@@ -26,6 +27,10 @@ class ShipperProvider extends ServiceProvider
             'x3tech\LaravelShipper\Command\CreateDockerCommand'
         );
         $this->app->bind(
+            'laravel_shipper.command.create_dirs',
+            'x3tech\LaravelShipper\Command\CreateDirsCommand'
+        );
+        $this->app->bind(
             'laravel_shipper.command.create_all',
             'x3tech\LaravelShipper\Command\CreateAllCommand'
         );
@@ -45,6 +50,7 @@ class ShipperProvider extends ServiceProvider
 
         $this->commands('laravel_shipper.command.create_fig');
         $this->commands('laravel_shipper.command.create_docker');
+        $this->commands('laravel_shipper.command.create_dirs');
         $this->commands('laravel_shipper.command.create_all');
 
         $this->initFigBuilder();
