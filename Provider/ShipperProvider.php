@@ -3,10 +3,9 @@ namespace x3tech\LaravelShipper\Provider;
 
 use Illuminate\Support\ServiceProvider;
 
-use x3tech\LaravelShipper\Command\BuildCommand;
-use x3tech\LaravelShipper\Command\OpenWebCommand;
-use x3tech\LaravelShipper\Command\CleanCommand;
-use x3tech\LaravelShipper\Command\RunCommand;
+use x3tech\LaravelShipper\Command\GenerateFigCommand;
+use x3tech\LaravelShipper\Command\GenerateDockerCommand;
+use x3tech\LaravelShipper\Command\GenerateAllCommand;
 
 use x3tech\LaravelShipper\Builder\FigBuilder;
 
