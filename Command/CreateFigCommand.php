@@ -9,21 +9,21 @@ use Symfony\Component\Yaml\Yaml;
 
 use x3tech\LaravelShipper\Builder\FigBuilder;
 
-class GenerateFigCommand extends Command
+class CreateFigCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'shipper:generate:fig';
+    protected $name = 'shipper:create:fig';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Generate fig.yml";
+    protected $description = "Create fig.yml";
 
     /**
      * @var FigBuilder
@@ -50,7 +50,7 @@ class GenerateFigCommand extends Command
      */
     public function fire()
     {
-        $this->info('Generating fig.yml...');
+        $this->info('Creating fig.yml...');
         $this->createFigYaml();
     }
 

@@ -10,21 +10,21 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use RuntimeException;
 
-class GenerateDockerCommand extends Command
+class CreateDockerCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'shipper:generate:docker';
+    protected $name = 'shipper:create:docker';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Generate Dockerfile";
+    protected $description = "Create Dockerfile";
 
     /**
      * @var Illuminate\Config\Repository
@@ -61,7 +61,7 @@ class GenerateDockerCommand extends Command
         $cfg = $this->config->get('shipper::config');
         $env = $this->config->getEnvironment();
 
-        $this->info("Generating Dockerfile...");
+        $this->info("Creating Dockerfile...");
         $this->createDockerFile($cfg, $env);
     }
 

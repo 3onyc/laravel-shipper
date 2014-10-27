@@ -6,21 +6,21 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class GenerateAllCommand extends Command
+class CreateAllCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'shipper:generate:all';
+    protected $name = 'shipper:create:all';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Generate Dockerfile and fig.yml";
+    protected $description = "Create Dockerfile and fig.yml";
 
     /**
      * Execute the console command.
@@ -29,8 +29,8 @@ class GenerateAllCommand extends Command
      */
     public function fire()
     {
-        $this->call('shipper:generate:fig');
-        $this->call('shipper:generate:docker');
+        $this->call('shipper:create:fig');
+        $this->call('shipper:create:docker');
 
         $this->info("All done, call 'fig build && fig up' and start coding!");
     }

@@ -3,9 +3,9 @@ namespace x3tech\LaravelShipper\Provider;
 
 use Illuminate\Support\ServiceProvider;
 
-use x3tech\LaravelShipper\Command\GenerateFigCommand;
-use x3tech\LaravelShipper\Command\GenerateDockerCommand;
-use x3tech\LaravelShipper\Command\GenerateAllCommand;
+use x3tech\LaravelShipper\Command\CreateFigCommand;
+use x3tech\LaravelShipper\Command\CreateDockerCommand;
+use x3tech\LaravelShipper\Command\CreateAllCommand;
 
 use x3tech\LaravelShipper\Builder\FigBuilder;
 
@@ -18,16 +18,16 @@ class ShipperProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            'laravel_shipper.command.generate_fig',
-            'x3tech\LaravelShipper\Command\GenerateFigCommand'
+            'laravel_shipper.command.create_fig',
+            'x3tech\LaravelShipper\Command\CreateFigCommand'
         );
         $this->app->bind(
-            'laravel_shipper.command.generate_docker',
-            'x3tech\LaravelShipper\Command\GenerateDockerCommand'
+            'laravel_shipper.command.create_docker',
+            'x3tech\LaravelShipper\Command\CreateDockerCommand'
         );
         $this->app->bind(
-            'laravel_shipper.command.generate_all',
-            'x3tech\LaravelShipper\Command\GenerateAllCommand'
+            'laravel_shipper.command.create_all',
+            'x3tech\LaravelShipper\Command\CreateAllCommand'
         );
 
         $this->app->bind(
@@ -43,9 +43,9 @@ class ShipperProvider extends ServiceProvider
     {
         $this->package('x3tech/laravel-shipper', 'shipper', dirname(__DIR__));
 
-        $this->commands('laravel_shipper.command.generate_fig');
-        $this->commands('laravel_shipper.command.generate_docker');
-        $this->commands('laravel_shipper.command.generate_all');
+        $this->commands('laravel_shipper.command.create_fig');
+        $this->commands('laravel_shipper.command.create_docker');
+        $this->commands('laravel_shipper.command.create_all');
 
         $this->initFigBuilder();
     }
