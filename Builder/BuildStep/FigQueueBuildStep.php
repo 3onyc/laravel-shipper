@@ -10,6 +10,8 @@ use Illuminate\Config\Repository;
  */
 class FigQueueBuildStep implements FigBuildStepInterface
 {
+    use FigVolumesTrait;
+
     /**
      * @var Illuminate\Config\Repository
      */
@@ -85,6 +87,6 @@ class FigQueueBuildStep implements FigBuildStepInterface
             'links' => array('queue')
         );
 
-        return $structure;
+        return $this->addVolumes($structure, 'worker', $this->config);
     }
 }

@@ -22,7 +22,7 @@ class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
             ->with('shipper::config')
             ->andReturn(include __DIR__ . '/../../../config/config.php')
             ->shouldReceive('getEnvironment')
-            ->andReturn('production')
+            ->andReturn('local')
             ->shouldReceive('get')
             ->with('queue')
             ->andReturn(array(
@@ -58,9 +58,27 @@ class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
                 'links' => array()
             )
         );
+        $volumes = array(
+            '.:/var/www',
+            './app/storage/logs/hhvm:/var/log/hhvm',
+            './app/storage/logs/nginx:/var/log/nginx'
+        );
 
         $structure = $this->getStep('beanstalkd')->run($input);
         $this->assertArrayHasKey('worker', $structure);
+        $this->assertEquals($volumes, $structure['worker']['volumes']);
+    }
+
+    public function testSync()
+    {
+        $input = array(
+            'app' => array(
+                'links' => array()
+            )
+        );
+
+        $structure = $this->getStep('sync')->run($input);
+        $this->assertArrayNotHasKey('worker', $structure);
     }
 
     public function testUnsupported()

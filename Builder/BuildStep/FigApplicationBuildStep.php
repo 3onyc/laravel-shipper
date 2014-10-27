@@ -5,21 +5,17 @@ use Illuminate\Config\Repository;
 
 class FigApplicationBuildStep implements FigBuildStepInterface
 {
-    /**
-     * @var string
-     */
-    protected $env;
+    use FigVolumesTrait;
 
     /**
-     * @var array
+     * @var Illuminate\Config\Repository
      */
-    protected $cfg;
+    protected $config;
 
     public function __construct(
         \Illuminate\Config\Repository $config
     ) {
-        $this->env = $config->getEnvironment();
-        $this->cfg = $config->get('shipper::config');
+        $this->config = $config;
     }
     
     /**
@@ -27,40 +23,21 @@ class FigApplicationBuildStep implements FigBuildStepInterface
      */
     public function run(array $structure)
     {
+        $env = $this->config->getEnvironment();
+        $cfg = $this->config->get('shipper::config');
+
         $structure['app'] = array(
             'build' => '.',
             'ports' => array(
-                sprintf('%s:80', $this->cfg['port'])
+                sprintf('%s:80', $cfg['port'])
             ),
             'environment' => array(
-                'APP_ENV' => $this->env
+                'APP_ENV' => $env
             ),
             'volumes' => array(),
             'links' => array()
         );
 
-        return $this->addVolumes($structure);
-    }
-
-    /**
-     * Add local volumes to fig.yml if current env is in config['mount_volumes']
-     *
-     * @param array $structure
-     *
-     * @return array
-     */
-    protected function addVolumes(array $structure)
-    {
-        if (!in_array($this->env, $this->cfg['mount_volumes'])) {
-            return $structure;
-        }
-
-        $structure['app']['volumes'] = array(
-            '.:/var/www',
-            './app/storage/logs/hhvm:/var/log/hhvm',
-            './app/storage/logs/nginx:/var/log/nginx'
-        );
-
-        return $structure;
+        return $this->addVolumes($structure, 'app', $this->config);
     }
 }
