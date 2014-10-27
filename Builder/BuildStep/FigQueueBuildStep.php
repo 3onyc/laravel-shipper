@@ -87,6 +87,10 @@ class FigQueueBuildStep implements FigBuildStepInterface
             'links' => array('queue')
         );
 
+        if (isset($structure['db'])) {
+            $structure['worker']['links'][] = 'db';
+        }
+
         return $this->addVolumes($structure, 'worker', $this->config);
     }
 }
