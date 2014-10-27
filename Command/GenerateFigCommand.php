@@ -26,9 +26,9 @@ class GenerateFigCommand extends Command
     protected $description = "Generate fig.yml";
 
     /**
-     * @var Illuminate\Config\Repository
+     * @var FigBuilder
      */
-    protected $config;
+    protected $figBUilder;
 
     /**
      * Create a new command instance.
