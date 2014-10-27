@@ -8,5 +8,6 @@ return array(
         '.:/var/www',
         './app/storage/logs/hhvm:/var/log/hhvm',
         './app/storage/logs/nginx:/var/log/nginx'
-    )
+    ),
+    'test_cmd'      => 'vendor/bin/phpunit'
 );

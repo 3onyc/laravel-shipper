@@ -13,6 +13,7 @@ use x3tech\LaravelShipper\Builder\FigBuilder;
 use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
+use x3tech\LaravelShipper\Builder\BuildStep\FigTestBuildStep;
 
 class ShipperProvider extends ServiceProvider
 {
@@ -67,6 +68,9 @@ class ShipperProvider extends ServiceProvider
         ), 50);
         $builder->addBuildStep($this->app->make(
             'x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep'
+        ), 50);
+        $builder->addBuildStep($this->app->make(
+            'x3tech\LaravelShipper\Builder\BuildStep\FigTestBuildStep'
         ), 50);
         $builder = $this->app->make('laravel_shipper.fig_builder');
     }
