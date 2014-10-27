@@ -12,6 +12,8 @@ RUN php -r 'readfile("https://getcomposer.org/installer");' | php -- --install-d
 
 ADD . /var/www/
 
+WORKDIR /var/www
+
 RUN cd /var/www/ && \
     composer update && \
     chown -R www-data:www-data /var/www/
