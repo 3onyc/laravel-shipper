@@ -35,6 +35,10 @@ class ShipperProvider extends ServiceProvider
             'laravel_shipper.command.create_all',
             'x3tech\LaravelShipper\Command\CreateAllCommand'
         );
+        $this->app->bind(
+            'laravel_shipper.command.check',
+            'x3tech\LaravelShipper\Command\CheckCommand'
+        );
 
         $this->app->bind(
             'laravel_shipper.fig_builder',
@@ -53,6 +57,7 @@ class ShipperProvider extends ServiceProvider
         $this->commands('laravel_shipper.command.create_docker');
         $this->commands('laravel_shipper.command.create_dirs');
         $this->commands('laravel_shipper.command.create_all');
+        $this->commands('laravel_shipper.command.check');
 
         $this->initFigBuilder();
     }
