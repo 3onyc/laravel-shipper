@@ -14,7 +14,7 @@ use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
 
-class CommandProvider extends ServiceProvider
+class ShipperProvider extends ServiceProvider
 {
     public function register()
     {
