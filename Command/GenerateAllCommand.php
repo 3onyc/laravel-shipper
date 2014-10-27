@@ -23,16 +23,6 @@ class GenerateAllCommand extends Command
     protected $description = "Generate Dockerfile and fig.yml";
 
     /**
-     * @var Illuminate\Config\Repository
-     */
-    protected $config;
-
-    /**
-     * @var x3tech\LaravelShipper\Service\DockerService
-     */
-    protected $docker;
-
-    /**
      * Create a new command instance.
      *
      * @return void
