@@ -10,7 +10,7 @@ class FigQueueBuildStepTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        $this->cfg = include __DIR__ . '/../../../../config/config.php';
+        $this->cfg = include LARAVEL_SHIPPER_ROOT . '/config/config.php';
     }
 
     /**

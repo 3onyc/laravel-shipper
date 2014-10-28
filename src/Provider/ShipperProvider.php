@@ -50,7 +50,7 @@ class ShipperProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('x3tech/laravel-shipper', 'shipper', dirname(dirname(__DIR__)));
+        $this->package('x3tech/laravel-shipper', 'shipper', LARAVEL_SHIPPER_ROOT);
 
         $this->commands('laravel_shipper.command.create_fig');
         $this->commands('laravel_shipper.command.create_docker');

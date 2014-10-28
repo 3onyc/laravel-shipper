@@ -26,6 +26,9 @@
     "autoload": {
         "psr-4": {
             "x3tech\\LaravelShipper\\": "src/"
-        }
+        },
+        "files": [
+            "src/init.php"
+        ]
     }
 }
