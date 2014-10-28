@@ -12,7 +12,7 @@
 >
     <testsuites>
         <testsuite name="laravel-shipper Test Suite">
-            <directory>./Test/</directory>
+            <directory>./src/Test/</directory>
         </testsuite>
     </testsuites>
 

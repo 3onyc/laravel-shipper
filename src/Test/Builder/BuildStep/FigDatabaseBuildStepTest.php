@@ -20,7 +20,7 @@ class FigDatabaseBuildStepTest extends PHPUnit_Framework_TestCase
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
             ->with('shipper::config')
-            ->andReturn(include __DIR__ . '/../../../config/config.php')
+            ->andReturn(include __DIR__ . '/../../../../config/config.php')
             ->shouldReceive('get')
             ->with('database')
             ->andReturn(array(
