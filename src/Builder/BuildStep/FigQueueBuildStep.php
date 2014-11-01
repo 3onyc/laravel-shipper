@@ -3,6 +3,9 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use Illuminate\Config\Repository;
 
+use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\Fig\Container;
+
 /**
  * Add queue+worker containers definition to fig.yml for supported queue drivers
  *
@@ -26,24 +29,47 @@ class FigQueueBuildStep implements FigBuildStepInterface
     ) {
         $this->config = $config;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function run(array $structure)
+    public function run(Definition $definition)
     {
         $conn = $this->getConnection();
-
-        if (!array_key_exists($conn['driver'], self::$supported)) {
-            return $structure;
+        if (!$this->isSupported($conn)) {
+            return;
         }
+
+        $queue = $this->getQueueContainer($conn);
+        $definition->addContainer($queue);
+        $definition->getContainer('app')->addLink($queue);
 
         if ($conn['driver'] !== 'sync') {
-            $structure = $this->addWorker($structure, $conn);
+            $this->addWorker($definition, $conn);
         }
+    }
 
-        $callback = array($this, self::$supported[$conn['driver']]);
-        return call_user_func($callback, $structure, $conn);
+    /**
+     * @param array $conn
+     *
+     * @return Container
+     */
+    protected function getQueueContainer(array $conn)
+    {
+        $method = self::$supported[$conn['driver']];
+        return $this->$method($conn);
+    }
+
+    /**
+     * Returns whether the queue driver is supported
+     *
+     * @param array $conn
+     *
+     * @return bool
+     */
+    protected function isSupported(array $conn)
+    {
+        return array_key_exists($conn['driver'], self::$supported);
     }
 
     /**
@@ -60,37 +86,39 @@ class FigQueueBuildStep implements FigBuildStepInterface
     /**
      * Add Beanstalkd container to the fig.yml structure
      *
-     * @param array $structure
      * @param array $conn Queue connection config
-     *
-     * @return array
      */
-    protected function addBeanstalkd(array $structure, array $conn)
+    protected function addBeanstalkd(array $conn)
     {
-        $structure['app']['links'][] = 'queue';
-        $structure['queue'] = array(
-            'image' => 'kdihalas/beanstalkd',
-        );
+        $queue = new Container('queue');
+        $queue->setImage('kdihalas/beanstalkd');
 
-        return $structure;
+        return $queue;
     }
 
-    protected function addWorker(array $structure, array $conn)
+    /**
+     * Add a queue worker to the definition
+     *
+     * @param Definition $definition
+     * @param array $conn
+     */
+    protected function addWorker(Definition $definition, array $conn)
     {
         $env = $this->config->getEnvironment();
-        $structure['worker'] = array(
-            'build' => '.',
-            'command' => '/var/www/artisan queue:listen',
-            'environment' => array(
-                'APP_ENV' => $env
-            ),
-            'links' => array('queue')
-        );
 
-        if (isset($structure['db'])) {
-            $structure['worker']['links'][] = 'db';
+        $worker = new Container('worker');
+        $worker->setBuild('.');
+        $worker->setCommand(array('/var/www/artisan', 'queue:listen'));
+        $worker->setEnvironment(array(
+            'APP_ENV' => $env
+        ));
+        $worker->addLink($definition->getContainer('queue'));
+
+        if ($definition->getContainer('db')) {
+            $worker->addLink($definition->getContainer('db'));
         }
 
-        return $this->addVolumes($structure, 'worker', $this->config);
+        $this->addVolumes($worker, $this->config);
+        $definition->addContainer($worker);
     }
 }

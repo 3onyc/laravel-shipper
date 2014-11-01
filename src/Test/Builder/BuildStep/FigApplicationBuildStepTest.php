@@ -5,8 +5,9 @@ use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
 use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
+use x3tech\LaravelShipper\Fig\Definition;
 
-class FigApplicationBuildStepTest extends PHPUnit_Framework_TestCase
+class FigApplicationBuildStepTest extends FigBuildStepTestBase
 {
     protected function setUp()
     {
@@ -35,42 +36,22 @@ class FigApplicationBuildStepTest extends PHPUnit_Framework_TestCase
 
     public function testWithoutVolumes()
     {
-        $expected = array(
-            'app' => array(
-                'build' => '.',
-                'ports' => array(
-                    '8080:80'
-                ),
-                'environment' => array(
-                    'APP_ENV' => 'production'
-                ),
-                'volumes' => array(),
-                'links' => array()
-            )
-        );
+        $definition = new Definition;
 
-        $structure = $this->getStep('production')->run(array());
-        $this->assertEquals($expected, $structure);
+        $this->getStep('production')->run($definition);
+        $result = $definition->toArray();
+
+        $this->assertArrayNotHasKey('volumes', $result['app']);
     }
 
     public function testWithVolumes()
     {
-        $expected = array(
-            'app' => array(
-                'build' => '.',
-                'ports' => array(
-                    '8080:80'
-                ),
-                'environment' => array(
-                    'APP_ENV' => 'local'
-                ),
-                'volumes' => $this->cfg['volumes'],
-                'links' => array()
-            )
-        );
+        $definition = new Definition;
 
-        $structure = $this->getStep('local')->run(array());
-        $this->assertEquals($expected, $structure);
+        $this->getStep('local')->run($definition);
+        $result = $definition->toArray();
+
+        $this->assertArrayHasKey('volumes', $result['app']);
     }
 
     public function tearDown()

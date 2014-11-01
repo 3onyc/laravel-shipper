@@ -3,6 +3,9 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use Illuminate\Config\Repository;
 
+use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\Fig\Container;
+
 class FigApplicationBuildStep implements FigBuildStepInterface
 {
     use FigVolumesTrait;
@@ -17,27 +20,23 @@ class FigApplicationBuildStep implements FigBuildStepInterface
     ) {
         $this->config = $config;
     }
-    
+
     /**
      * {@inheritdoc}
      */
-    public function run(array $structure)
+    public function run(Definition $definition)
     {
         $env = $this->config->getEnvironment();
         $cfg = $this->config->get('shipper::config');
 
-        $structure['app'] = array(
-            'build' => '.',
-            'ports' => array(
-                sprintf('%s:80', $cfg['port'])
-            ),
-            'environment' => array(
-                'APP_ENV' => $env
-            ),
-            'volumes' => array(),
-            'links' => array()
-        );
+        $app = new Container('app');
+        $app->setBuild('.');
+        $app->setPort($cfg['port'], 80);
+        $app->setEnvironment(array(
+            'APP_ENV' => $env
+        ));
+        $this->addVolumes($app, $this->config);
 
-        return $this->addVolumes($structure, 'app', $this->config);
+        $definition->addContainer($app);
     }
 }

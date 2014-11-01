@@ -1,14 +1,14 @@
 <?php
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
+use x3tech\LaravelShipper\Fig\Definition;
+
 interface FigBuildStepInterface
 {
     /**
      * Run the BuildStep
      *
-     * @param array $structure Current structure for the fig.yml file
-     *
-     * @return array The modified fig.yml structure
+     * @param Definition $definition Fig definition object
      */
-    public function run(array $structure);
+    public function run(Definition $definition);
 }

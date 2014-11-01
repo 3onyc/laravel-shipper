@@ -2,6 +2,7 @@
 namespace x3tech\LaravelShipper\Builder;
 
 use x3tech\LaravelShipper\Builder\BuildStep\FigBuildStepInterface;
+use x3tech\LaravelShipper\Fig\Definition;
 
 class FigBuilder
 {
@@ -17,15 +18,15 @@ class FigBuilder
 
     public function build()
     {
-        $structure = array();
+        $definition = new Definition;
 
         foreach ($this->getPriorities() as $priority) {
             foreach ($this->steps[$priority] as $step) {
-                $structure = $step->run($structure);
+                $step->run($definition);
             }
         }
 
-        return $structure;
+        return $definition->toArray();
     }
 
     protected function getPriorities()

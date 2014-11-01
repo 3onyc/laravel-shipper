@@ -5,8 +5,10 @@ use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
 use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
+use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\Fig\Container;
 
-class FigDatabaseBuildStepTest extends PHPUnit_Framework_TestCase
+class FigDatabaseBuildStepTest extends FigBuildStepTestBase
 {
     /**
      * Create a FigDatabaseBuildStep and mock config with database driver $driver
@@ -41,28 +43,22 @@ class FigDatabaseBuildStepTest extends PHPUnit_Framework_TestCase
 
     public function testMysql()
     {
-        $expected = array('db');
-        $input = array(
-            'app' => array(
-                'links' => array()
-            )
-        );
+        $definition = $this->getDefinition();
 
-        $structure = $this->getStep('mysql')->run($input);
-        $this->assertEquals($expected, $structure['app']['links']);
+        $this->getStep('mysql')->run($definition);
+
+        $result = $definition->toArray();
+        $this->assertContains('db', $result['app']['links']);
     }
 
     public function testUnsupported()
     {
-        $expected = array();
-        $input = array(
-            'app' => array(
-                'links' => array()
-            )
-        );
+        $definition = $this->getDefinition();
 
-        $structure = $this->getStep('unsupported')->run($input);
-        $this->assertEquals($expected, $structure['app']['links']);
+        $this->getStep('unsupported')->run($definition);
+
+        $result = $definition->toArray();
+        $this->assertArrayNotHasKey('links', $result['app']);
     }
 
     public function tearDown()
