@@ -1,6 +1,6 @@
-# 0.1.2
+# 0.2.0
 
-...
+* Rewrite to use a Definition and Container class for building the fig.yml file
 
 # 0.1.1
 
