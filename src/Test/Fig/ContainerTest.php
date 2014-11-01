@@ -30,6 +30,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('command', $buildArray);
         $this->assertArrayNotHasKey('entrypoint', $buildArray);
         $this->assertArrayNotHasKey('links', $buildArray);
+        $this->assertArrayNotHasKey('ports', $buildArray);
         $this->assertArrayNotHasKey('volumes', $buildArray);
         $this->assertArrayNotHasKey('build', $imageArray);
     }
@@ -46,6 +47,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $imageContainer->setImage('foo/bar');
         $imageContainer->setCommand(array('foo', '--bar'));
         $imageContainer->setEntrypoint('/bin/echo');
+        $imageContainer->setPort(80, 80);
         $imageContainer->addLink($buildContainer);
         $imageContainer->setVolume('foo', 'bar');
 
@@ -57,6 +59,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/bin/echo', $imageArray['entrypoint']);
         $this->assertEquals('foo/bar', $imageArray['image']);
         $this->assertContains('bar', $imageArray['links']);
+        $this->assertContains('80:80', $imageArray['ports']);
         $this->assertContains('foo:bar', $imageArray['volumes']);
 
         $this->assertEquals('.', $buildArray['build']);
@@ -117,6 +120,19 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertContains('foo:bar', $array['volumes']);
     }
 
+    /**
+     * Test flattening the ports array
+     */
+    public function testFlattenPorts()
+    {
+        $container = new Container('foo');
+        $container->setBuild('.');
+        $container->setPort(80, 8080);
+
+        $array = $container->toArray();
+
+        $this->assertContains('80:8080', $array['ports']);
+    }
     /**
      * Test that array contains no name field
      */

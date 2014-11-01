@@ -45,6 +45,11 @@ class Container
      */
     protected $volumes;
 
+    /**
+     * @var [int]int
+     */
+    protected $ports;
+
     public function __construct($name)
     {
         $this->name = $name;
@@ -52,6 +57,7 @@ class Container
         $this->links = array();
         $this->environment = array();
         $this->volumes = array();
+        $this->ports = array();
     }
 
     /**
@@ -133,6 +139,11 @@ class Container
         $this->volumes[$host] = $guest;
     }
 
+    public function setPort($host, $guest)
+    {
+        $this->ports[$host] = $guest;
+    }
+
     public function toArray()
     {
         if ($this->build === null && $this->image === null) {
@@ -148,6 +159,9 @@ class Container
         }
         if (count($this->volumes) > 0) {
             $return['volumes'] = $this->flattenKeyValue($this->volumes);
+        }
+        if (count($this->ports) > 0) {
+            $return['ports'] = $this->flattenKeyValue($this->ports, '%u:%u');
         }
         if ($this->build !== null) {
             $return['build'] = $this->build;
