@@ -18,17 +18,20 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testNotSetWhenEmpty()
     {
-        $container = new Container('foo');
-        $container->setBuild('.');
-
+        $buildContainer = new Container('foo');
+        $buildContainer->setBuild('.');
         $imageContainer = new Container('foo');
         $imageContainer->setImage('foo/bar');
 
-        $this->assertArrayNotHasKey('image', $container->toArray());
-        $this->assertArrayNotHasKey('command', $container->toArray());
-        $this->assertArrayNotHasKey('entrypoint', $container->toArray());
+        $buildArray = $buildContainer->toArray();
+        $imageArray = $imageContainer->toArray();
 
-        $this->assertArrayNotHasKey('build', $imageContainer->toArray());
+        $this->assertArrayNotHasKey('image', $buildArray);
+        $this->assertArrayNotHasKey('command', $buildArray);
+        $this->assertArrayNotHasKey('entrypoint', $buildArray);
+        $this->assertArrayNotHasKey('links', $buildArray);
+        $this->assertArrayNotHasKey('volumes', $buildArray);
+        $this->assertArrayNotHasKey('build', $imageArray);
     }
 
     /**
@@ -36,13 +39,16 @@ class ContainerTest extends PHPUnit_Framework_TestCase
      */
     public function testSetWhenFilled()
     {
+        $buildContainer = new Container('bar');
+        $buildContainer->setBuild('.');
+
         $imageContainer = new Container('foo');
         $imageContainer->setImage('foo/bar');
         $imageContainer->setCommand(array('foo', '--bar'));
         $imageContainer->setEntrypoint('/bin/echo');
+        $imageContainer->addLink($buildContainer);
+        $imageContainer->setVolume('foo', 'bar');
 
-        $buildContainer = new Container('bar');
-        $buildContainer->setBuild('.');
 
         $imageArray = $imageContainer->toArray();
         $buildArray = $buildContainer->toArray();
@@ -50,6 +56,8 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array('foo', '--bar'), $imageArray['command']);
         $this->assertEquals('/bin/echo', $imageArray['entrypoint']);
         $this->assertEquals('foo/bar', $imageArray['image']);
+        $this->assertContains('bar', $imageArray['links']);
+        $this->assertContains('foo:bar', $imageArray['volumes']);
 
         $this->assertEquals('.', $buildArray['build']);
     }
@@ -91,20 +99,22 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $container->addLink(new Container('baz'));
 
         $array = $container->toArray();
+
         $this->assertEquals(array('bar', 'baz'), $array['links']);
     }
 
     /**
-     * Test the flattenVolumes method
+     * Test flattening the volumes array
      */
     public function testFlattenVolumes()
     {
         $container = new Container('foo');
         $container->setBuild('.');
         $container->setVolume('foo', 'bar');
+
         $array = $container->toArray();
 
-        $this->assertEquals(array('foo:bar'), $array['volumes']);
+        $this->assertContains('foo:bar', $array['volumes']);
     }
 
     /**
@@ -116,6 +126,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $container->setBuild('.');
 
         $array = $container->toArray();
+
         $this->assertArrayNotHasKey('name', $array);
     }
 

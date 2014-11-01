@@ -139,12 +139,16 @@ class Container
             throw new InvalidArgumentException('Need to have one of image/build set');
         }
 
-        $return = array(
-            'links' => $this->flattenLinks(),
-            'environment' => $this->environment,
-            'volumes' => $this->flattenVolumes()
-        );
-
+        $return = array();
+        if (count($this->links) > 0) {
+            $return['links'] = $this->flattenLinks();
+        }
+        if (count($this->environment) > 0) {
+            $return['environment'] = $this->environment;
+        }
+        if (count($this->volumes) > 0) {
+            $return['volumes'] = $this->flattenKeyValue($this->volumes);
+        }
         if ($this->build !== null) {
             $return['build'] = $this->build;
         }
@@ -166,13 +170,10 @@ class Container
         return array_keys($this->links);
     }
 
-    protected function flattenVolumes()
+    protected function flattenKeyValue(array $toFlatten, $format = '%s:%s')
     {
-        $return = array();
-        foreach ($this->volumes as $host => $guest) {
-            $return[] = sprintf('%s:%s', $host, $guest);
-        }
-
-        return $return;
+        return array_map(function ($value, $key) use ($format) {
+            return sprintf($format, $key, $value);
+        }, array_values($toFlatten), array_keys($toFlatten));
     }
 }
