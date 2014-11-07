@@ -10,7 +10,7 @@ Integrating Laravel, Docker and Fig
 ## Instructions
 
 1. Add to `composer.json`
-   `composer require 'x3tech/laravel-shipper' '~0.2'`
+   `composer require 'x3tech/laravel-shipper' '~0.3'`
 2. Add the provider
    `x3tech\LaravelShipper\Provider\ShipperProvider` to `config/app.php`
 3. If using MySQL, set host to `db` in `database.php`

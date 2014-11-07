@@ -1,3 +1,7 @@
+# 0.3.0
+
+* Add checks for database and queue configuration
+
 # 0.2.0
 
 * Rewrite to use a Definition and Container class for building the fig.yml file
