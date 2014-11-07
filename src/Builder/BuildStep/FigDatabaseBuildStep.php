@@ -87,6 +87,8 @@ class FigDatabaseBuildStep implements FigBuildStepInterface
      *
      * @param Definition $definition
      * @param array $conn Database connection config
+     *
+     * @return Container
      */
     protected function addMysql(array $conn)
     {
@@ -107,7 +109,7 @@ class FigDatabaseBuildStep implements FigBuildStepInterface
      * @param Definition $definition
      * @param array $conn Database connection config
      *
-     * @return array
+     * @return Container
      */
     protected function getPostgreSql(array $conn)
     {
