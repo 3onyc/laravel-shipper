@@ -43,7 +43,7 @@ class CheckCommand extends Command
         
         $exit = (new Process(sprintf('which %s', $name)))->run();
         if ($exit != 0) {
-            $this->error(sprintf("not found", $name));
+            $this->error("not found");
         } else {
             $this->info("present");
         }
