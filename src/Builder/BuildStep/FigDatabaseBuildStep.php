@@ -3,6 +3,7 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use Illuminate\Config\Repository;
 
+use x3tech\LaravelShipper\SupportReporter;
 use x3tech\LaravelShipper\Fig\Definition;
 use x3tech\LaravelShipper\Fig\Container;
 
@@ -24,9 +25,15 @@ class FigDatabaseBuildStep implements FigBuildStepInterface
     );
 
     public function __construct(
-        \Illuminate\Config\Repository $config
+        \Illuminate\Config\Repository $config,
+        SupportReporter $supportReporter
     ) {
         $this->config = $config;
+
+        array_map(
+            array($supportReporter, 'addSupportedDatabase'),
+            array_keys(static::$supported)
+        );
     }
 
     /**

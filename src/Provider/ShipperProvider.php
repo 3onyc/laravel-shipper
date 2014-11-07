@@ -46,6 +46,10 @@ class ShipperProvider extends ServiceProvider
         $this->app->singleton(
             'x3tech\LaravelShipper\Builder\FigBuilder'
         );
+
+        $this->app->singleton(
+            'x3tech\LaravelShipper\SupportReporter'
+        );
     }
 
     public function boot()
