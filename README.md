@@ -10,9 +10,19 @@ Integrating Laravel, Docker and Fig
 ## Instructions
 
 1. Add to `composer.json`
-   `composer require 'x3tech/laravel-shipper' '~0.3'`
-2. Add the provider
-   `x3tech\LaravelShipper\Provider\ShipperProvider` to `config/app.php`
+
+   ```bash
+   composer require 'x3tech/laravel-shipper' '~0.3'
+   ```
+2. Add the provider to `config/app.php`
+
+   ```php
+   'providers' => array(
+       ...
+       'x3tech\LaravelShipper\Provider\ShipperProvider'
+   );
+   ```
+
 3. If using MySQL, set host to `db` in `database.php`
 4. If using beanstalkd, set host to `queue` in `queue.php`
 5. Modify the env detection in `bootstrap/start.php` as follows
