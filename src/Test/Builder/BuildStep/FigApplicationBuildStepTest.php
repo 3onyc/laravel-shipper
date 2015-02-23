@@ -6,6 +6,7 @@ use Mockery as m;
 
 use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
 use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\SupportReporter;
 
 class FigApplicationBuildStepTest extends FigBuildStepTestBase
 {

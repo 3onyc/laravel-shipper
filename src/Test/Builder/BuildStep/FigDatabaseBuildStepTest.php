@@ -7,6 +7,7 @@ use Mockery as m;
 use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
 use x3tech\LaravelShipper\Fig\Definition;
 use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\SupportReporter;
 
 class FigDatabaseBuildStepTest extends FigBuildStepTestBase
 {
@@ -38,7 +39,7 @@ class FigDatabaseBuildStepTest extends FigBuildStepTestBase
             ))
             ->getMock();
 
-        return new FigDatabaseBuildStep($config);
+        return new FigDatabaseBuildStep($config, new SupportReporter);
     }
 
     public function testMysql()

@@ -5,6 +5,7 @@ use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
 use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
+use x3tech\LaravelShipper\SupportReporter;
 
 class FigQueueBuildStepTest extends FigBuildStepTestBase
 {
@@ -40,7 +41,7 @@ class FigQueueBuildStepTest extends FigBuildStepTestBase
             ))
             ->getMock();
 
-        return new FigQueueBuildStep($config);
+        return new FigQueueBuildStep($config, new SupportReporter);
     }
 
     public function testBeanstalkd()
