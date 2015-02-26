@@ -13,10 +13,11 @@ trait FigVolumesTrait
      */
     protected function addVolumes(
         Container $container,
-        \Illuminate\Config\Repository $config
+        \Illuminate\Config\Repository $config,
+        \Illuminate\Foundation\Application $app
     ) {
-        $env = $config->getEnvironment();
-        $cfg = $config->get('shipper::config');
+        $env = $app->environment();
+        $cfg = $config->get('shipper');
 
         if (!in_array($env, $cfg['mount_volumes'])) {
             return;

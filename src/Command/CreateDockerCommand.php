@@ -27,6 +27,11 @@ class CreateDockerCommand extends Command
     protected $description = "Create Dockerfile";
 
     /**
+     * @var Illuminate\Foundation\Application
+     */
+    protected $app;
+
+    /**
      * @var Illuminate\Config\Repository
      */
     protected $config;
@@ -42,11 +47,13 @@ class CreateDockerCommand extends Command
      * @return void
      */
     public function __construct(
+        \Illuminate\Foundation\Application $app,
         \Illuminate\Config\Repository $config,
         \Illuminate\View\Factory $view
     ) {
         parent::__construct();
 
+        $this->app = $app;
         $this->config = $config;
         $this->view = $view;
     }
@@ -58,8 +65,8 @@ class CreateDockerCommand extends Command
      */
     public function fire()
     {
-        $cfg = $this->config->get('shipper::config');
-        $env = $this->config->getEnvironment();
+        $cfg = $this->config->get('shipper');
+        $env = $this->app->environment();
 
         $this->info("Creating Dockerfile...");
         $this->createDockerFile($cfg, $env);

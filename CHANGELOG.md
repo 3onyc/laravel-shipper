@@ -1,3 +1,7 @@
+# 0.4.0
+
+* Updated for Laravel 5.0
+
 # 0.3.1
 
 * Rename nginx-hhvm.conf to nginx-hhvm.conf.tpl

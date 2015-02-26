@@ -11,13 +11,20 @@ class FigApplicationBuildStep implements FigBuildStepInterface
     use FigVolumesTrait;
 
     /**
+     * @var Illuminate\Foundation\Application
+     */
+    protected $app;
+
+    /**
      * @var Illuminate\Config\Repository
      */
     protected $config;
 
     public function __construct(
+        \Illuminate\Foundation\Application $app,
         \Illuminate\Config\Repository $config
     ) {
+        $this->app = $app;
         $this->config = $config;
     }
 
@@ -26,8 +33,8 @@ class FigApplicationBuildStep implements FigBuildStepInterface
      */
     public function run(Definition $definition)
     {
-        $env = $this->config->getEnvironment();
-        $cfg = $this->config->get('shipper::config');
+        $env = $this->app->environment();
+        $cfg = $this->config->get('shipper');
 
         $app = new Container('app');
         $app->setBuild('.');
@@ -35,7 +42,7 @@ class FigApplicationBuildStep implements FigBuildStepInterface
         $app->setEnvironment(array(
             'APP_ENV' => $env
         ));
-        $this->addVolumes($app, $this->config);
+        $this->addVolumes($app, $this->config, $this->app);
 
         $definition->addContainer($app);
     }

@@ -23,12 +23,15 @@ class FigQueueBuildStepTest extends FigBuildStepTestBase
      */
     protected function getStep($driver)
     {
+        $app = m::mock('Illuminate\Foundation\Application')
+            ->shouldReceive('environment')
+            ->andReturn('local')
+            ->getMock();
+
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
-            ->with('shipper::config')
+            ->with('shipper')
             ->andReturn($this->cfg)
-            ->shouldReceive('getEnvironment')
-            ->andReturn('local')
             ->shouldReceive('get')
             ->with('queue')
             ->andReturn(array(
@@ -41,7 +44,7 @@ class FigQueueBuildStepTest extends FigBuildStepTestBase
             ))
             ->getMock();
 
-        return new FigQueueBuildStep($config, new SupportReporter);
+        return new FigQueueBuildStep($app, $config, new SupportReporter);
     }
 
     public function testBeanstalkd()

@@ -54,7 +54,16 @@ class ShipperProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->package('x3tech/laravel-shipper', 'shipper', LARAVEL_SHIPPER_ROOT);
+        $this->loadViewsFrom(LARAVEL_SHIPPER_ROOT . '/views', 'shipper');
+        $this->mergeConfigFrom(LARAVEL_SHIPPER_ROOT . '/config/config.php', 'shipper');
+
+        $this->publishes([
+            LARAVEL_SHIPPER_ROOT . '/views' => base_path('resources/views/vendor/shipper')
+        ], 'views');
+
+        $this->publishes([
+            LARAVEL_SHIPPER_ROOT . '/config/config.php' => config_path('shipper.php')
+        ], 'config');
 
         $this->commands('laravel_shipper.command.create_fig');
         $this->commands('laravel_shipper.command.create_docker');

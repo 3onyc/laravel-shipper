@@ -1,5 +1,5 @@
 FROM x3tech/nginx-hhvm:3.6.0
-MAINTAINER {{ $maintainer }}
+MAINTAINER {!! $maintainer !!}
 
 # Install dependencies
 RUN apt-get update && \

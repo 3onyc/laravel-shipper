@@ -21,14 +21,21 @@ class FigQueueBuildStep implements FigBuildStepInterface
      */
     protected $config;
 
+    /**
+     * @var Illuminate\Foundation\Application
+     */
+    protected $app;
+
     protected static $supported = array(
         'beanstalkd' => 'addBeanstalkd'
     );
 
     public function __construct(
+        \Illuminate\Foundation\Application $app,
         \Illuminate\Config\Repository $config,
         SupportReporter $supportReporter
     ) {
+        $this->app = $app;
         $this->config = $config;
 
         array_map(
@@ -111,7 +118,7 @@ class FigQueueBuildStep implements FigBuildStepInterface
      */
     protected function addWorker(Definition $definition, array $conn)
     {
-        $env = $this->config->getEnvironment();
+        $env = $this->app->environment();
 
         $worker = new Container('worker');
         $worker->setBuild('.');
@@ -125,7 +132,7 @@ class FigQueueBuildStep implements FigBuildStepInterface
             $worker->addLink($definition->getContainer('db'));
         }
 
-        $this->addVolumes($worker, $this->config);
+        $this->addVolumes($worker, $this->config, $this->app);
         $definition->addContainer($worker);
     }
 }

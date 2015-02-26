@@ -119,7 +119,7 @@ class CreateFigCommand extends Command
     protected function addQueue(array $structure)
     {
         $env = $this->config->getEnvironment();
-        $cfg = $this->config->get('shipper::config');
+        $cfg = $this->config->get('shipper');
         $default = $this->config->get('queue.default');
         $connections = $this->config->get('queue.connections');
         $connection = $connections[$default];

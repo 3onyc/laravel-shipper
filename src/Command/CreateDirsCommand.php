@@ -49,7 +49,7 @@ class CreateDirsCommand extends Command
     {
         $this->info("Creating volume directories...");
 
-        $cfg = $this->config->get('shipper::config');
+        $cfg = $this->config->get('shipper');
         foreach ($cfg['volumes'] as $volume) {
             $src = $this->getSource($volume);
 

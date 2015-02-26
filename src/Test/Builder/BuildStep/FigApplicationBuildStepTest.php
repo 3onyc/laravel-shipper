@@ -24,15 +24,18 @@ class FigApplicationBuildStepTest extends FigBuildStepTestBase
      */
     protected function getStep($env)
     {
-        $config = m::mock('Illuminate\Config\Repository')
-            ->shouldReceive('getEnvironment')
+        $app = m::mock('Illuminate\Foundation\Application')
+            ->shouldReceive('environment')
             ->andReturn($env)
+            ->getMock();
+
+        $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
-            ->with('shipper::config')
+            ->with('shipper')
             ->andReturn($this->cfg)
             ->getMock();
 
-        return new FigApplicationBuildStep($config);
+        return new FigApplicationBuildStep($app, $config);
     }
 
     public function testWithoutVolumes()
