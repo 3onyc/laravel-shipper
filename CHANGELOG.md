@@ -1,3 +1,8 @@
+# 0.3.1
+
+* Rename nginx-hhvm.conf to nginx-hhvm.conf.tpl
+* Pin HHVM to 3.6.0
+
 # 0.3.0
 
 * Add checks for database and queue configuration
