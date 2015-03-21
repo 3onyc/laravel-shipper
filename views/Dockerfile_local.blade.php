@@ -1,4 +1,4 @@
-FROM x3tech/nginx-hhvm
+FROM x3tech/nginx-hhvm:3.6.0
 MAINTAINER {{ $maintainer }}
 
 WORKDIR /var/www
