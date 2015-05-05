@@ -14,7 +14,7 @@ Integrating Laravel, Docker and Fig
    For Laravel 4.2
 
    ```bash
-   composer require 'x3tech/laravel-shipper' '0.3.*'
+   composer require 'x3tech/laravel-shipper' 'dev-laravel-4.2'
    ```
 
    For Laravel 5
