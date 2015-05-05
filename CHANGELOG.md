@@ -1,3 +1,7 @@
+# 0.4.1
+
+* Update HHVM to 3.7.0
+
 # 0.4.0
 
 * Updated for Laravel 5.0
