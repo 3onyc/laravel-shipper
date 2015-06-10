@@ -5,9 +5,9 @@ set -euo pipefail
 if [ -n "${PHP_VERSION:-}" -a -n "${PHP_BIN:-}" ]; then
   # Skip
   echo > /dev/null
-elif which hhvm > /dev/null; then
-  readonly PHP_VERSION="HHVM"
-  readonly PHP_BIN="$(which hhvm)"
+#elif which hhvm > /dev/null; then
+#  readonly PHP_VERSION="HHVM"
+#  readonly PHP_BIN="$(which hhvm)"
 else
   readonly PHP_VERSION="$(php -r 'echo phpversion();')"
   readonly PHP_BIN="$(which php)"
