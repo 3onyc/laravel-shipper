@@ -29,7 +29,7 @@ create_version() {
 
   echo "Creating ${VERSION}..."
   if [ ! -d "${VERSION_DIR}/vendor" ]; then
-    $COMPOSER_BIN create-project laravel/laravel "${FUNC_TEST_DIR}/${VERSION}" "${VERSION}" #--prefer-source --keep-vcs
+    $COMPOSER_BIN create-project laravel/laravel "${VERSION_DIR}" "${VERSION}" #--prefer-source --keep-vcs
   fi
 
   cd "${VERSION_DIR}"
