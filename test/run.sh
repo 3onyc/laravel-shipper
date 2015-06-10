@@ -16,8 +16,8 @@ fi
 readonly COMPOSER_BIN="${PHP_BIN} $(which composer)"
 readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
 
-readonly PROJECT_DIR="$(pwd)/../"
-readonly FUNC_TEST_DIR="$(pwd)/functional/_test"
+readonly PROJECT_DIR="$(pwd)"
+readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
 
 cleanup() {
   rm -rf "${FUNC_TEST_DIR}"
