@@ -1,5 +1,5 @@
 language: php
-install: composer install
+install: 'composer self-update && composer install'
 php:
   - 5.6
   - 5.5
