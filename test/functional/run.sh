@@ -17,6 +17,13 @@ create_version() {
   [ -d "${VERSION_DIR}/vendor" ] && echo "${VERSION} Already created" && return 0
 
   composer create-project laravel/laravel "${TEST_DIR}/${VERSION}" "${VERSION}" --prefer-dist
+
+  cd "${VERSION_DIR}"
+  if [ ! -d vendor/x3tech/laravel-shipper ]; then
+    composer require --prefer-source "x3tech/laravel-shipper dev-feature-multi-ver"
+  fi
+  sync_shipper "${VERSION}"
+  add_provider "${VERSION}"
 }
 
 sync_shipper() {
@@ -71,15 +78,11 @@ test_version() {
   local VERSION_DIR="${TEST_DIR}/${VERSION}"
 
   echo "Testing Laravel ${VERSION}"
-  create_version "${VERSION}"
-
   cd "${VERSION_DIR}"
-  if [ ! -d vendor/x3tech/laravel-shipper ]; then
-    composer require --prefer-source "x3tech/laravel-shipper dev-feature-multi-ver"
-  fi
-  sync_shipper "${VERSION}"
-  add_provider "${VERSION}"
+  test_artisan_commands
+}
 
+test_artisan_commands() {
   if ./artisan | grep 'shipper:check' > /dev/null; then
     return 0
   else
@@ -100,16 +103,26 @@ main() {
   local COMMAND="${1:-default}"
 
   case "$COMMAND" in
+    prepare)
+      create_version "4.0"
+      create_version "4.1"
+      create_version "4.2"
+      create_version "5.0"
+      create_version "5.1"
+      ;;
     cleanup)
       cleanup
       ;;
-    *)
+    test)
       test_version "4.0" && echo_pass || echo_fail
       test_version "4.1" && echo_pass || echo_fail
       test_version "4.2" && echo_pass || echo_fail
       test_version "5.0" && echo_pass || echo_fail
       test_version "5.1" && echo_pass || echo_fail
       ;;
+    *)
+      echo "run.sh (prepare|test|cleanup)"
+      exit 64
   esac
 }
 
