@@ -11,8 +11,8 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="laravel-shipper Test Suite">
-            <directory>./src/Test/</directory>
+        <testsuite name="laravel-shipper unit tests">
+            <directory>./test/unit/</directory>
         </testsuite>
     </testsuites>
 
