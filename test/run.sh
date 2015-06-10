@@ -19,6 +19,8 @@ readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
 readonly PROJECT_DIR="$(pwd)"
 readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
 
+readonly BRANCH="feature-multi-ver"
+
 cleanup() {
   rm -rf "${FUNC_TEST_DIR}"
 }
@@ -34,7 +36,7 @@ create_version() {
 
   cd "${VERSION_DIR}"
   if [ ! -d vendor/x3tech/laravel-shipper ]; then
-    $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-feature-multi-ver"
+    $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}"
   fi
   sync_shipper "${VERSION}"
   add_provider "${VERSION}"
