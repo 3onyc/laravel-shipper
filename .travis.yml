@@ -6,4 +6,4 @@ php:
   - 5.4
   - 5.3
   - hhvm
-script: ./test/run.sh
+script: ./test/run.sh run
