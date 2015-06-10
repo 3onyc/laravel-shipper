@@ -37,7 +37,9 @@ class CreateDockerCommand extends Command
     protected $config;
 
     /**
-     * @var Illuminate\View\Factory
+     * @var Illuminate\View\Factory|Illuminate\View\Environment
+     *
+     * Class depends on Laravel version (< 4.2 = Environment, 4.2+ = Factory)
      */
     protected $view;
 
@@ -49,7 +51,7 @@ class CreateDockerCommand extends Command
     public function __construct(
         \Illuminate\Foundation\Application $app,
         \Illuminate\Config\Repository $config,
-        \Illuminate\View\Factory $view
+        $view
     ) {
         parent::__construct();
 
