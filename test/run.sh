@@ -100,7 +100,7 @@ test_artisan_commands() {
   if $ARTISAN_BIN | grep 'shipper:check' > /dev/null; then
     return 0
   else
-    $ARTISAN_BIN | head -n2
+    $ARTISAN_BIN
     return 1
   fi
 }
