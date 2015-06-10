@@ -1,5 +1,8 @@
 language: php
-install: 'composer self-update && composer install'
+install:
+  - composer self-update
+  - composer install
+  - ./test/run.sh prepare
 php:
   - 5.6
   - 5.5
