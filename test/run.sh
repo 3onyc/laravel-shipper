@@ -2,14 +2,13 @@
 set -euo pipefail
 [ -n "${DEBUG:-}" ] && set -x
 
+source test/lib/util.sh
+source test/lib/setup.sh
+
 ## Vars {{{
-if [ -n "${PHP_VERSION:-}" -a -n "${PHP_BIN:-}" ]; then
-  # Skip
-  echo > /dev/null
-#elif which hhvm > /dev/null; then
-#  readonly PHP_VERSION="HHVM"
-#  readonly PHP_BIN="$(which hhvm)"
-else
+
+# PHP version detection
+if [ -z "${PHP_VERSION:-}" -a -z "${PHP_BIN:-}" ]; then
   readonly PHP_VERSION="$(php -r 'echo phpversion();')"
   readonly PHP_BIN="$(which php)"
 fi
@@ -18,80 +17,13 @@ readonly COMPOSER_BIN="$(which composer)"
 readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
 
 readonly PROJECT_DIR="$(pwd)"
+
+# Directory to put installs in for functional tests
 readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
 
+# Branch to initially install from (Will later be copied over by sync_shipper)
 readonly BRANCH="feature-multi-ver"
 ## }}} Vars
-
-## Setup/Teardown {{{
-cleanup() {
-  rm -rf "${FUNC_TEST_DIR}"
-}
-
-create_version() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
-
-  echo "Creating ${VERSION}..."
-  if [ ! -d "${VERSION_DIR}/vendor" ]; then
-    $COMPOSER_BIN create-project laravel/laravel "${VERSION_DIR}" "${VERSION}" #--prefer-source --keep-vcs
-  fi
-
-  cd "${VERSION_DIR}"
-  if [ ! -d vendor/x3tech/laravel-shipper ]; then
-    $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}"
-  fi
-  sync_shipper "${VERSION}"
-  add_provider "${VERSION}"
-}
-
-sync_shipper() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
-
-  cd "${VERSION_DIR}"
-  rsync \
-    --checksum \
-    --archive \
-    --exclude=vendor/ \
-    --exclude=.git/ \
-    --exclude=test/functional \
-    "$PROJECT_DIR/" \
-    vendor/x3tech/laravel-shipper
-}
-
-add_provider() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
-
-  case "${VERSION}" in
-    4.0|4.1|4.2)
-      local CONFIG_FILE="${VERSION_DIR}/app/config/app.php"
-      if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
-        sed -i \
-          "s/WorkbenchServiceProvider',/WorkbenchServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-          "${CONFIG_FILE}"
-      fi
-      ;;
-    5.0)
-      local CONFIG_FILE="${VERSION_DIR}/config/app.php"
-      if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
-        sed -i \
-          "s/RouteServiceProvider',/RouteServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-          "${CONFIG_FILE}"
-      fi
-      ;;
-    5.1)
-      local CONFIG_FILE="${VERSION_DIR}/config/app.php"
-      if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
-        sed -i \
-          "s/RouteServiceProvider::class,/RouteServiceProvider::class, 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-          "${CONFIG_FILE}"
-      fi
-      ;;
-  esac
-}
-## }}} Setup/Teardown
 
 ## Functional Tests {{{
 test_version() {
@@ -129,37 +61,15 @@ test_artisan_check_fail_incorrect_db() {
 
   echo -n " - Exit code is 1 on fail... "
   set +e
-  $COMMAND > /dev/null
-  local EXIT_CODE="$?"
+  ($COMMAND > /dev/null && echo_fail && return 1) || (echo_pass && return 0)
   set -e
-  ([ "$EXIT_CODE" -eq 1 ] || return 1 && echo_pass) || (echo_fail && return 1)
 }
 
 ## }}} Functional Tests
 
-## Utility {{{
-echo_fail() {
-  echo -e "\e[31mFAIL\e[0m"
-}
-
-echo_pass() {
-  echo -e "\e[32mPASS\e[0m"
-}
-## }}} Utility
-
 main() {
   local COMMAND="${1:-default}"
-
-  case "$PHP_VERSION" in
-    5.3.*)
-      local LARAVEL_VERSIONS="4.0 4.1"
-      ;;
-    5.4.*)
-      local LARAVEL_VERSIONS="4.0 4.1 4.2 5.0"
-      ;;
-    5.*|HHVM)
-      local LARAVEL_VERSIONS="4.0 4.1 4.2 5.0 5.1"
-  esac
+  local LARAVEL_VERSIONS="$(get_versions_to_test "${PHP_VERSION}")"
 
   case "$COMMAND" in
     prepare)
