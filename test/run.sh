@@ -100,16 +100,41 @@ test_version() {
 
   echo "Testing Laravel ${VERSION}"
   cd "${VERSION_DIR}"
-  test_artisan_commands
+
+  test_artisan_commands_present
+  test_artisan_check_fail_incorrect_db
 }
 
-test_artisan_commands() {
-  if $ARTISAN_BIN | grep 'shipper:check' > /dev/null; then
+test_artisan_commands_present() {
+  local OUTPUT="$($ARTISAN_BIN)"
+
+  echo "# Test that shipper artisan commands exist"
+  echo -n " - Commands present... "
+  if echo $OUTPUT | grep 'shipper:check' > /dev/null; then
+    echo_pass
     return 0
   else
-    $ARTISAN_BIN
+    echo_fail
+    echo "-- Output: --"
+    echo "$OUTPUT"
     return 1
   fi
+}
+
+test_artisan_check_fail_incorrect_db() {
+  local COMMAND="$ARTISAN_BIN shipper:check"
+
+  echo "# Test artisan shipper:check"
+
+  echo -n " - Show error message on incorrect DB... "
+  (echo $($COMMAND) | grep "Host not set to 'db'" > /dev/null && echo_pass) || (echo_fail && return 1)
+
+  echo -n " - Exit code is 1 on fail... "
+  set +e
+  $COMMAND > /dev/null
+  local EXIT_CODE="$?"
+  set -e
+  ([ "$EXIT_CODE" -eq 1 ] || return 1 && echo_pass) || (echo_fail && return 1)
 }
 
 ## }}} Functional Tests
@@ -151,7 +176,7 @@ main() {
       cd "${PROJECT_DIR}" && vendor/bin/phpunit
 
       for VERSION in $LARAVEL_VERSIONS; do
-        test_version "${VERSION}" && echo_pass || echo_fail
+        test_version "${VERSION}"
       done
       ;;
     run)
