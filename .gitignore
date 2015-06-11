@@ -1,3 +1,4 @@
 composer.lock
 vendor
 test/functional/_test
+test/functional/_cache

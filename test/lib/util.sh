@@ -21,3 +21,14 @@ get_versions_to_test() {
       echo "4.0 4.1 4.2 5.0 5.1"
   esac
 }
+
+do_test() {
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local testFn="$2"
+
+  reset_install "${version}"
+  cd "${versionDir}"
+
+  $testFn
+}

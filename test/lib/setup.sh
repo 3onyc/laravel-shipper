@@ -1,6 +1,18 @@
 #!/bin/bash
 cleanup() {
   rm -rvf "${FUNC_TEST_DIR}"
+  rm -rvf "${FUNC_TEST_CACHE_DIR}"
+}
+
+create_versions() {
+  local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
+
+  mkdir -p "${FUNC_TEST_DIR}"
+  mkdir -p "${FUNC_TEST_CACHE_DIR}"
+
+  for version in $laravelVersions; do
+    create_version "${version}"
+  done
 }
 
 create_version() {
@@ -14,9 +26,22 @@ create_version() {
   add_provider "${version}"
 }
 
+reset_install() {
+  local version="$1"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
+  local versionTestDir="${FUNC_TEST_DIR}/${version}"
+
+  rsync \
+    --archive \
+    --delete \
+    --checksum \
+    "${versionDir}/" \
+    "${versionTestDir}"
+}
+
 create_project() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   if [ ! -d "${versionDir}/vendor" ]; then
     echo "[${version}] Creating project..."
@@ -30,7 +55,7 @@ create_project() {
 
 install_shipper() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   cd "${versionDir}"
   if [ ! -d vendor/x3tech/laravel-shipper ]; then
@@ -45,7 +70,7 @@ install_shipper() {
 
 sync_shipper() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   echo "[${version}] Syncing laravel-shipper..."
   cd "${versionDir}"
@@ -78,7 +103,7 @@ add_provider() {
 
 add_provider_4() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   local configFile="${versionDir}/app/config/app.php"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
@@ -90,7 +115,7 @@ add_provider_4() {
 
 add_provider_50() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   local configFile="${versionDir}/config/app.php"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
@@ -102,7 +127,7 @@ add_provider_50() {
 
 add_provider_51() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
+  local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
   local configFile="${versionDir}/config/app.php"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then

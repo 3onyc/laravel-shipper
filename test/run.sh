@@ -20,19 +20,25 @@ readonly PROJECT_DIR="$(pwd)"
 
 # Directory to put installs in for functional tests
 readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
+readonly FUNC_TEST_CACHE_DIR="${PROJECT_DIR}/test/functional/_cache"
 
 # Branch to initially install from (Will later be copied over by sync_shipper)
 readonly BRANCH="feature-multi-ver"
 ## }}} Vars
 
 ## Functional Tests {{{
+test_versions() {
+  local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
+  for version in $laravelVersions; do
+    echo "[${version} Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
+    test_version "${version}"
+  done
+}
 test_version() {
   local version="$1"
-  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  cd "${versionDir}"
-  test_artisan_commands_present
-  test_artisan_check_fail_incorrect_db
+  do_test "${version}" test_artisan_commands_present
+  do_test "${version}" test_artisan_check_fail_incorrect_db
 }
 
 test_artisan_commands_present() {
@@ -69,13 +75,10 @@ test_artisan_check_fail_incorrect_db() {
 
 main() {
   local commandArg="${1:-default}"
-  local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
 
   case "$commandArg" in
     prepare)
-      for version in $laravelVersions; do
-        create_version "${version}"
-      done
+      create_versions
       ;;
     cleanup)
       cleanup
@@ -88,10 +91,7 @@ main() {
       (cd "${PROJECT_DIR}" && vendor/bin/phpunit)
       ;;
     func-test)
-      for version in $laravelVersions; do
-        echo "[${version} Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
-        test_version "${version}"
-      done
+      test_versions
       ;;
     run)
       main "prepare"
