@@ -27,54 +27,54 @@ readonly BRANCH="feature-multi-ver"
 
 ## Functional Tests {{{
 test_version() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  cd "${VERSION_DIR}"
+  cd "${versionDir}"
   test_artisan_commands_present
   test_artisan_check_fail_incorrect_db
 }
 
 test_artisan_commands_present() {
-  local OUTPUT="$($ARTISAN_BIN)"
+  local artisanOutput="$($ARTISAN_BIN)"
 
   echo "# Test that shipper artisan commands exist"
   echo -n " - Commands present... "
-  if echo $OUTPUT | grep 'shipper:check' > /dev/null; then
+  if echo "$artisanOutput" | grep 'shipper:check' > /dev/null; then
     echo_pass
     return 0
   else
     echo_fail
     echo "-- Output: --"
-    echo "$OUTPUT"
+    echo "$artisanOutput"
     return 1
   fi
 }
 
 test_artisan_check_fail_incorrect_db() {
-  local COMMAND="$ARTISAN_BIN shipper:check"
+  local checkCommand="$ARTISAN_BIN shipper:check"
 
   echo "# Test artisan shipper:check"
 
   echo -n " - Show error message on incorrect DB... "
-  (echo $($COMMAND) | grep "Host not set to 'db'" > /dev/null && echo_pass) || (echo_fail && return 1)
+  (echo $($checkCommand) | grep "Host not set to 'db'" > /dev/null && echo_pass) || (echo_fail && return 1)
 
   echo -n " - Exit code is 1 on fail... "
   set +e
-  ($COMMAND > /dev/null && echo_fail && return 1) || (echo_pass && return 0)
+  ($checkCommand > /dev/null && echo_fail && return 1) || (echo_pass && return 0)
   set -e
 }
 
 ## }}} Functional Tests
 
 main() {
-  local COMMAND="${1:-default}"
-  local LARAVEL_VERSIONS="$(get_versions_to_test "${PHP_VERSION}")"
+  local commandArg="${1:-default}"
+  local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
 
-  case "$COMMAND" in
+  case "$commandArg" in
     prepare)
-      for VERSION in $LARAVEL_VERSIONS; do
-        create_version "${VERSION}"
+      for version in $laravelVersions; do
+        create_version "${version}"
       done
       ;;
     cleanup)
@@ -83,9 +83,9 @@ main() {
     test)
       cd "${PROJECT_DIR}" && vendor/bin/phpunit
 
-      for VERSION in $LARAVEL_VERSIONS; do
-        echo "Running tests for laravel-shipper on Laravel ${VERSION}, PHP ${PHP_VERSION}..."
-        test_version "${VERSION}"
+      for version in $laravelVersions; do
+        echo "[${version} Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
+        test_version "${version}"
       done
       ;;
     run)

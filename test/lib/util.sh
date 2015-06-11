@@ -1,7 +1,4 @@
 #!/bin/bash
-set -euo pipefail
-[ -n "${DEBUG:-}" ] && set -x
-
 echo_fail() {
   echo -e "\e[31mFAIL\e[0m"
 }
@@ -11,9 +8,9 @@ echo_pass() {
 }
 
 get_versions_to_test() {
-  local PHP_VER="$1"
+  local phpVersion="$1"
 
-  case "$PHP_VER" in
+  case "$phpVersion" in
     5.3.*)
       echo "4.0 4.1"
       ;;

@@ -1,47 +1,54 @@
 #!/bin/bash
-set -euo pipefail
-[ -n "${DEBUG:-}" ] && set -x
-
 cleanup() {
-  rm -rf "${FUNC_TEST_DIR}"
+  rm -rvf "${FUNC_TEST_DIR}"
 }
 
 create_version() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
 
-  echo "Creating test env for Laravel ${VERSION}..."
+  echo "[${version}] Creating environment..."
 
-  create_project "${VERSION}"
-  install_shipper "${VERSION}"
-  sync_shipper "${VERSION}"
-  add_provider "${VERSION}"
+  create_project "${version}"
+  install_shipper "${version}"
+  sync_shipper "${version}"
+  add_provider "${version}"
 }
 
 create_project() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  if [ ! -d "${VERSION_DIR}/vendor" ]; then
-    $COMPOSER_BIN create-project laravel/laravel "${VERSION_DIR}" "${VERSION}" #--prefer-source --keep-vcs
+  if [ ! -d "${versionDir}/vendor" ]; then
+    echo "[${version}] Creating project..."
+    if [ -n "$DEBUG" ]; then
+      $COMPOSER_BIN create-project laravel/laravel "${versionDir}" "${version}"
+    else
+      $COMPOSER_BIN create-project laravel/laravel "${versionDir}" "${version}" > /dev/null
+    fi
   fi
 }
 
 install_shipper() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  cd "${VERSION_DIR}"
+  cd "${versionDir}"
   if [ ! -d vendor/x3tech/laravel-shipper ]; then
-    $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}"
+    echo "[${version}] Installing laravel-shipper..."
+    if [ -n "$DEBUG" ]; then
+      $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}" > /dev/null
+    else
+      $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}"
+    fi
   fi
 }
 
 sync_shipper() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  cd "${VERSION_DIR}"
+  echo "[${version}] Syncing laravel-shipper..."
+  cd "${versionDir}"
   rsync \
     --checksum \
     --archive \
@@ -53,54 +60,54 @@ sync_shipper() {
 }
 
 add_provider() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
 
-  case "${VERSION}" in
+  echo "[${version}] Adding provider..."
+  case "${version}" in
     4.0|4.1|4.2)
-      add_provider_4 "${VERSION}"
+      add_provider_4 "${version}"
       ;;
     5.0)
-      add_provider_50 "${VERSION}"
+      add_provider_50 "${version}"
       ;;
     5.1)
-      add_provider_51 "${VERSION}"
+      add_provider_51 "${version}"
       ;;
   esac
 }
 
 add_provider_4() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  local CONFIG_FILE="${VERSION_DIR}/app/config/app.php"
-  if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
+  local configFile="${versionDir}/app/config/app.php"
+  if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/WorkbenchServiceProvider',/WorkbenchServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-      "${CONFIG_FILE}"
+      "${configFile}"
   fi
 }
 
 add_provider_50() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  local CONFIG_FILE="${VERSION_DIR}/config/app.php"
-  if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
+  local configFile="${versionDir}/config/app.php"
+  if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/RouteServiceProvider',/RouteServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-      "${CONFIG_FILE}"
+      "${configFile}"
   fi
 }
 
 add_provider_51() {
-  local VERSION="$1"
-  local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
+  local version="$1"
+  local versionDir="${FUNC_TEST_DIR}/${version}"
 
-  local CONFIG_FILE="${VERSION_DIR}/config/app.php"
-  if ! grep 'ShipperProvider' "${CONFIG_FILE}" > /dev/null; then
+  local configFile="${versionDir}/config/app.php"
+  if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/RouteServiceProvider::class,/RouteServiceProvider::class, 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
-      "${CONFIG_FILE}"
+      "${configFile}"
   fi
 }
