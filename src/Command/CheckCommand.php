@@ -52,10 +52,14 @@ class CheckCommand extends Command
      */
     public function fire()
     {
-        $this->checkExecutable('docker');
-        $this->checkExecutable('fig');
-        $this->checkDatabaseConfig();
-        $this->checkQueueConfig();
+        $passedChecks = 0;
+
+        $passedChecks += $this->checkExecutable('docker');
+        $passedChecks += $this->checkExecutable('fig');
+        $passedChecks += $this->checkDatabaseConfig();
+        $passedChecks += $this->checkQueueConfig();
+
+        return $passedChecks == 4 ? 0 : 1;
     }
 
     protected function checkExecutable($name)
@@ -70,8 +74,10 @@ class CheckCommand extends Command
 
         if ($exit != 0) {
             $this->error("not found");
+            return false;
         } else {
             $this->info("present");
+            return true;
         }
     }
 
@@ -85,21 +91,23 @@ class CheckCommand extends Command
 
         if (!$this->supportReporter->isSupportedDatabase($conn['driver'])) {
             $this->error(sprintf('driver %s not supported', $conn['driver']));
-            return;
+            return false;
         } else {
             $this->info('ok');
         }
 
         // No further checks for SQLite
         if ($conn['driver'] === 'sqlite') {
-            return;
+            return true;
         }
 
         $this->output->write(str_pad("<comment>Checking database config... </comment>", 60));
         if ($conn['host'] !== 'db') {
             $this->error("Host not set to 'db'");
+            return false;
         } else {
             $this->info('ok');
+            return true;
         }
     }
 
@@ -113,21 +121,23 @@ class CheckCommand extends Command
 
         if (!$this->supportReporter->isSupportedQueue($conn['driver'])) {
             $this->error(sprintf('driver %s not supported', $conn['driver']));
-            return;
+            return false;
         } else {
             $this->info('ok');
         }
 
-        // No further checks for SQLite
+        // No further checks for sync driver
         if ($conn['driver'] === 'sync') {
-            return;
+            return true;
         }
 
         $this->output->write(str_pad("<comment>Checking queue config... </comment>", 60));
         if ($conn['host'] !== 'queue') {
             $this->error("Host not set to 'queue'");
+            return false;
         } else {
             $this->info('ok');
+            return true;
         }
     }
 
