@@ -81,8 +81,13 @@ main() {
       cleanup
       ;;
     test)
-      cd "${PROJECT_DIR}" && vendor/bin/phpunit
-
+      main "unit-test"
+      main "func-test"
+      ;;
+    unit-test)
+      (cd "${PROJECT_DIR}" && vendor/bin/phpunit)
+      ;;
+    func-test)
       for version in $laravelVersions; do
         echo "[${version} Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
         test_version "${version}"
@@ -93,7 +98,7 @@ main() {
       main "test"
       ;;
     *)
-      echo "run.sh (prepare|test|cleanup|run)"
+      echo "run.sh (prepare|test|func-test|unit-test|cleanup|run)"
       exit 64
   esac
 }
