@@ -12,10 +12,8 @@ use x3tech\LaravelShipper\Fig\Container;
  *
  * @see FigBuildStepInterface
  */
-class FigQueueBuildStep implements FigBuildStepInterface
+class FigQueueBuildStep extends FigVolumesBuildStep
 {
-    use FigVolumesTrait;
-
     /**
      * @var Illuminate\Config\Repository
      */

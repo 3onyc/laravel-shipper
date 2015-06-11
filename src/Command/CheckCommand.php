@@ -64,8 +64,10 @@ class CheckCommand extends Command
             sprintf("<comment>Checking for %s executable... </comment>", $name),
             60
         ));
-        
-        $exit = (new Process(sprintf('which %s', $name)))->run();
+
+        $process = new Process(sprintf('which %s', $name));
+        $exit = $process->run();
+
         if ($exit != 0) {
             $this->error("not found");
         } else {

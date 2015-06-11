@@ -4,7 +4,7 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use x3tech\LaravelShipper\Fig\Container;
 
-trait FigVolumesTrait
+abstract class FigVolumesBuildStep implements FigBuildStepInterface
 {
     /**
      * Add local volumes to container if current env is in config['mount_volumes']

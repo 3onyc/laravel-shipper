@@ -6,10 +6,8 @@ use Illuminate\Config\Repository;
 use x3tech\LaravelShipper\Fig\Definition;
 use x3tech\LaravelShipper\Fig\Container;
 
-class FigApplicationBuildStep implements FigBuildStepInterface
+class FigApplicationBuildStep extends FigVolumesBuildStep
 {
-    use FigVolumesTrait;
-
     /**
      * @var Illuminate\Foundation\Application
      */
