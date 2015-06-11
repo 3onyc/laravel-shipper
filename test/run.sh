@@ -98,9 +98,7 @@ test_version() {
   local VERSION="$1"
   local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
 
-  echo "Testing Laravel ${VERSION}"
   cd "${VERSION_DIR}"
-
   test_artisan_commands_present
   test_artisan_check_fail_incorrect_db
 }
@@ -176,6 +174,7 @@ main() {
       cd "${PROJECT_DIR}" && vendor/bin/phpunit
 
       for VERSION in $LARAVEL_VERSIONS; do
+        echo "Running tests for laravel-shipper on Laravel ${VERSION}, PHP ${PHP_VERSION}..."
         test_version "${VERSION}"
       done
       ;;
