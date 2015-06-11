@@ -13,7 +13,7 @@ else
   readonly PHP_BIN="$(which php)"
 fi
 
-readonly COMPOSER_BIN="${PHP_BIN} $(which composer)"
+readonly COMPOSER_BIN="$(which composer)"
 readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
 
 readonly PROJECT_DIR="$(pwd)"
