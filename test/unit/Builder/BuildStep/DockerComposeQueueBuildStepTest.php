@@ -4,10 +4,10 @@ namespace x3tech\LaravelShipper\Test\Builder\BuildStep;
 use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
-use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeQueueBuildStep;
 use x3tech\LaravelShipper\SupportReporter;
 
-class FigQueueBuildStepTest extends FigBuildStepTestBase
+class DockerComposeQueueBuildStepTest extends DockerComposeBuildStepTestBase
 {
     protected function setUp()
     {
@@ -15,11 +15,11 @@ class FigQueueBuildStepTest extends FigBuildStepTestBase
     }
 
     /**
-     * Create a FigDatabaseBuildStep and mock config with database driver $driver
+     * Create a DockerComposeDatabaseBuildStep and mock config with database driver $driver
      *
      * @param string $driver Database driver for the mock to return
      *
-     * @return FigDatabaseBuildStep
+     * @return DockerComposeDatabaseBuildStep
      */
     protected function getStep($driver)
     {
@@ -44,7 +44,7 @@ class FigQueueBuildStepTest extends FigBuildStepTestBase
             ))
             ->getMock();
 
-        return new FigQueueBuildStep($app, $config, new SupportReporter);
+        return new DockerComposeQueueBuildStep($app, $config, new SupportReporter);
     }
 
     public function testBeanstalkd()

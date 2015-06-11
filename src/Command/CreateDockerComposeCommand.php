@@ -7,28 +7,28 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 
-use x3tech\LaravelShipper\Builder\FigBuilder;
+use x3tech\LaravelShipper\Builder\DockerComposeBuilder;
 
-class CreateFigCommand extends Command
+class CreateDockerComposeCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'shipper:create:fig';
+    protected $name = 'shipper:create:docker-compose';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = "Create fig.yml";
+    protected $description = "Create docker-compose.yml";
 
     /**
-     * @var FigBuilder
+     * @var DockerComposeBuilder
      */
-    protected $figBUilder;
+    protected $dockerComposeBuilder;
 
     /**
      * Create a new command instance.
@@ -36,11 +36,11 @@ class CreateFigCommand extends Command
      * @return void
      */
     public function __construct(
-        FigBuilder $figBuilder
+        DockerComposeBuilder $dockerComposeBuilder
     ) {
         parent::__construct();
 
-        $this->figBuilder = $figBuilder;
+        $this->dockerComposeBuilder = $dockerComposeBuilder;
     }
 
     /**
@@ -50,20 +50,20 @@ class CreateFigCommand extends Command
      */
     public function fire()
     {
-        $this->info('Creating fig.yml...');
+        $this->info('Creating docker-compose.yml...');
         $this->createFigYaml();
     }
 
     protected function createFigYaml()
     {
-        $structure = $this->figBuilder->build();
+        $structure = $this->dockerComposeBuilder->build();
 
-        $figPath = sprintf('%s/fig.yml', base_path());
+        $figPath = sprintf('%s/docker-compose.yml', base_path());
         $figContents = Yaml::dump($structure, 3);
 
         if (file_put_contents($figPath, $figContents) === false) {
             throw new RuntimeException(sprintf(
-                "Failed to write fig.yml, please check whether you have write permissions for '%s'",
+                "Failed to write docker-compose.yml, please check whether you have write permissions for '%s'",
                 base_path()
             ));
         }

@@ -4,15 +4,15 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 use Illuminate\Config\Repository;
 
 use x3tech\LaravelShipper\SupportReporter;
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
 /**
- * Add queue+worker containers definition to fig.yml for supported queue drivers
+ * Add queue+worker containers definition to docker-compose.yml for supported queue drivers
  *
- * @see FigBuildStepInterface
+ * @see DockerComposeBuildStepInterface
  */
-class FigQueueBuildStep extends FigVolumesBuildStep
+class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
 {
     /**
      * @var Illuminate\Config\Repository
@@ -96,7 +96,7 @@ class FigQueueBuildStep extends FigVolumesBuildStep
     }
 
     /**
-     * Add Beanstalkd container to the fig.yml structure
+     * Add Beanstalkd container to the docker-compose.yml structure
      *
      * @param array $conn Queue connection config
      */

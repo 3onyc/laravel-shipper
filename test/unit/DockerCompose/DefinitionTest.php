@@ -1,10 +1,10 @@
 <?php
-namespace x3tech\LaravelShipper\Test\Fig;
+namespace x3tech\LaravelShipper\Test\DockerCompose;
 
 use PHPUnit_Framework_TestCase;
 
-use x3tech\LaravelShipper\Fig\Container;
-use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
 
 class DefinitionTest extends PHPUnit_Framework_TestCase
 {

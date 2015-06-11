@@ -4,11 +4,11 @@ namespace x3tech\LaravelShipper\Test\Builder\BuildStep;
 use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
-use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
-use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeApplicationBuildStep;
+use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\SupportReporter;
 
-class FigApplicationBuildStepTest extends FigBuildStepTestBase
+class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBase
 {
     protected function setUp()
     {
@@ -16,11 +16,11 @@ class FigApplicationBuildStepTest extends FigBuildStepTestBase
     }
 
     /**
-     * Create a FigApplicationBuildStep and mock config with environment $env
+     * Create a DockerComposeApplicationBuildStep and mock config with environment $env
      *
      * @param string $env Environment for the config mock to return
      *
-     * @return FigApplicationBuildStep
+     * @return DockerComposeApplicationBuildStep
      */
     protected function getStep($env)
     {
@@ -35,7 +35,7 @@ class FigApplicationBuildStepTest extends FigBuildStepTestBase
             ->andReturn($this->cfg)
             ->getMock();
 
-        return new FigApplicationBuildStep($app, $config);
+        return new DockerComposeApplicationBuildStep($app, $config);
     }
 
     public function testWithoutVolumes()

@@ -4,15 +4,15 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 use Illuminate\Config\Repository;
 
 use x3tech\LaravelShipper\SupportReporter;
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
 /**
- * Add database container definition to fig.yml for supported database drivers
+ * Add database container definition to docker-compose.yml for supported database drivers
  *
- * @see FigBuildStepInterface
+ * @see DockerComposeBuildStepInterface
  */
-class FigDatabaseBuildStep implements FigBuildStepInterface
+class DockerComposeDatabaseBuildStep implements DockerComposeBuildStepInterface
 {
     /**
      * @var Illuminate\Config\Repository
@@ -90,7 +90,7 @@ class FigDatabaseBuildStep implements FigBuildStepInterface
     }
 
     /**
-     * Add MySQL container to the fig.yml structure
+     * Add MySQL container to the docker-compose.yml structure
      *
      * @param Definition $definition
      * @param array $conn Database connection config
@@ -111,7 +111,7 @@ class FigDatabaseBuildStep implements FigBuildStepInterface
     }
 
     /**
-     * Add PostgreSQL container to the fig.yml structure
+     * Add PostgreSQL container to the docker-compose.yml structure
      *
      * @param Definition $definition
      * @param array $conn Database connection config

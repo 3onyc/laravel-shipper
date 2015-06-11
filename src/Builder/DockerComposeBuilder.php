@@ -1,13 +1,13 @@
-<?PHP
+<?php
 namespace x3tech\LaravelShipper\Builder;
 
-use x3tech\LaravelShipper\Builder\BuildStep\FigBuildStepInterface;
-use x3tech\LaravelShipper\Fig\Definition;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeBuildStepInterface;
+use x3tech\LaravelShipper\DockerCompose\Definition;
 
-class FigBuilder
+class DockerComposeBuilder
 {
     /**
-     * @var array[int]array[]BuildStepInterface
+     * @var array[int]array[]DockerComposeBuildStepInterface
      */
     protected $steps;
 
@@ -37,7 +37,7 @@ class FigBuilder
         return $priorities;
     }
 
-    public function addBuildStep(FigBuildStepInterface $step, $priority = 100)
+    public function addBuildStep(DockerComposeBuildStepInterface $step, $priority = 100)
     {
         $this->ensureArray($priority);
         $this->steps[$priority][] = $step;

@@ -4,19 +4,19 @@ namespace x3tech\LaravelShipper\Test\Builder;
 use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
-use x3tech\LaravelShipper\Builder\FigBuilder;
-use x3tech\LaravelShipper\Builder\BuildStep\FigBuildStepInterface;
+use x3tech\LaravelShipper\Builder\DockerComposeBuilder;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeBuildStepInterface;
 
-class FigBuilderTest extends PHPUnit_Framework_TestCase
+class DockerComposeBuilderTest extends PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $definition = 'x3tech\LaravelShipper\Fig\Definition';
-        $cls = 'x3tech\LaravelShipper\Builder\BuildStep\FigBuildStepInterface';
-        $this->builder = new FigBuilder();
+        $definition = 'x3tech\LaravelShipper\DockerCompose\Definition';
+        $cls = 'x3tech\LaravelShipper\Builder\BuildStep\DockerComposeBuildStepInterface';
+        $this->builder = new DockerComposeBuilder();
 
         $this->mockStep1 = m::mock($cls)
              ->shouldReceive('run')
@@ -40,7 +40,7 @@ class FigBuilderTest extends PHPUnit_Framework_TestCase
     }
     public function testBuildOne()
     {
-        $builder = new FigBuilder();
+        $builder = new DockerComposeBuilder();
         $builder->addBuildStep($this->mockStep1);
 
         $this->assertArrayHasKey('foo', $builder->build());
@@ -48,7 +48,7 @@ class FigBuilderTest extends PHPUnit_Framework_TestCase
 
     public function testBuildPriorities()
     {
-        $builder = new FigBuilder();
+        $builder = new DockerComposeBuilder();
         $builder->addBuildStep($this->mockStep2, 150);
         $builder->addBuildStep($this->mockStep1);
 

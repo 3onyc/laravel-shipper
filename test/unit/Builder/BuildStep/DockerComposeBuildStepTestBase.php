@@ -2,10 +2,10 @@
 namespace x3tech\LaravelShipper\Test\Builder\BuildStep;
 
 use PHPUnit_Framework_TestCase;
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
-class FigBuildStepTestBase  extends PHPUnit_Framework_TestCase
+class DockerComposeBuildStepTestBase  extends PHPUnit_Framework_TestCase
 {
     protected function getDefinition()
     {

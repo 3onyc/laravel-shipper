@@ -2,9 +2,9 @@
 
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
-abstract class FigVolumesBuildStep implements FigBuildStepInterface
+abstract class DockerComposeVolumesBuildStep implements DockerComposeBuildStepInterface
 {
     /**
      * Add local volumes to container if current env is in config['mount_volumes']

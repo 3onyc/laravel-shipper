@@ -5,23 +5,23 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Container\BindingResolutionException;
 
 use x3tech\LaravelShipper\Command\CheckCommand;
-use x3tech\LaravelShipper\Command\CreateFigCommand;
+use x3tech\LaravelShipper\Command\CreateDockerComposeCommand;
 use x3tech\LaravelShipper\Command\CreateDockerCommand;
 use x3tech\LaravelShipper\Command\CreateDirsCommand;
 use x3tech\LaravelShipper\Command\CreateAllCommand;
 
-use x3tech\LaravelShipper\Builder\FigBuilder;
+use x3tech\LaravelShipper\Builder\DockerComposeBuilder;
 
-use x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep;
-use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
-use x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeApplicationBuildStep;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeDatabaseBuildStep;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeQueueBuildStep;
 
 class ShipperProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('laravel_shipper.command.create_fig', function($app) {
-            return new CreateFigCommand($app['laravel_shipper.fig_builder']);
+        $this->app->bind('laravel_shipper.command.create_docker_compose', function($app) {
+            return new CreateDockerComposeCommand($app['laravel_shipper.docker_compose_builder']);
         });
         $this->app->bind('laravel_shipper.command.create_docker', function($app) {
             return new CreateDockerCommand($app, $app['config'], $app['view']);
@@ -40,15 +40,15 @@ class ShipperProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            'laravel_shipper.fig_builder',
-            'x3tech\LaravelShipper\Builder\FigBuilder'
+            'laravel_shipper.docker_compose_builder',
+            'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
         );
         $this->app->bind(
             'laravel_shipper.support_reporter',
             'x3tech\LaravelShipper\SupportReporter'
         );
         $this->app->singleton(
-            'x3tech\LaravelShipper\Builder\FigBuilder'
+            'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
         );
 
         $this->app->singleton(
@@ -87,27 +87,27 @@ class ShipperProvider extends ServiceProvider
     {
         method_exists($this, 'package') ? $this->boot4() : $this->boot5();
 
-        $this->commands('laravel_shipper.command.create_fig');
+        $this->commands('laravel_shipper.command.create_docker_compose');
         $this->commands('laravel_shipper.command.create_docker');
         $this->commands('laravel_shipper.command.create_dirs');
         $this->commands('laravel_shipper.command.create_all');
         $this->commands('laravel_shipper.command.check');
 
-        $this->initFigBuilder();
+        $this->initDockerComposeBuilder();
     }
 
-    protected function initFigBuilder()
+    protected function initDockerComposeBuilder()
     {
-        $builder = $this->app->make('laravel_shipper.fig_builder');
+        $builder = $this->app->make('laravel_shipper.docker_compose_builder');
         $builder->addBuildStep($this->app->make(
-            'x3tech\LaravelShipper\Builder\BuildStep\FigApplicationBuildStep'
+            'x3tech\LaravelShipper\Builder\BuildStep\DockerComposeApplicationBuildStep'
         ), 25);
         $builder->addBuildStep($this->app->make(
-            'x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep'
+            'x3tech\LaravelShipper\Builder\BuildStep\DockerComposeDatabaseBuildStep'
         ), 50);
         $builder->addBuildStep($this->app->make(
-            'x3tech\LaravelShipper\Builder\BuildStep\FigQueueBuildStep'
+            'x3tech\LaravelShipper\Builder\BuildStep\DockerComposeQueueBuildStep'
         ), 50);
-        $builder = $this->app->make('laravel_shipper.fig_builder');
+        $builder = $this->app->make('laravel_shipper.docker_compose_builder');
     }
 }

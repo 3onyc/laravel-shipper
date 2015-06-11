@@ -1,5 +1,5 @@
 <?php
-namespace x3tech\LaravelShipper\Fig;
+namespace x3tech\LaravelShipper\DockerCompose;
 
 class Definition
 {

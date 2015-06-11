@@ -4,19 +4,19 @@ namespace x3tech\LaravelShipper\Test\Builder\BuildStep;
 use PHPUnit_Framework_TestCase;
 use Mockery as m;
 
-use x3tech\LaravelShipper\Builder\BuildStep\FigDatabaseBuildStep;
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeDatabaseBuildStep;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 use x3tech\LaravelShipper\SupportReporter;
 
-class FigDatabaseBuildStepTest extends FigBuildStepTestBase
+class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
 {
     /**
-     * Create a FigDatabaseBuildStep and mock config with database driver $driver
+     * Create a DockerComposeDatabaseBuildStep and mock config with database driver $driver
      *
      * @param string $driver Database driver for the mock to return
      *
-     * @return FigDatabaseBuildStep
+     * @return DockerComposeDatabaseBuildStep
      */
     protected function getStep($driver)
     {
@@ -39,7 +39,7 @@ class FigDatabaseBuildStepTest extends FigBuildStepTestBase
             ))
             ->getMock();
 
-        return new FigDatabaseBuildStep($config, new SupportReporter);
+        return new DockerComposeDatabaseBuildStep($config, new SupportReporter);
     }
 
     public function testMysql()

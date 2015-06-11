@@ -1,9 +1,9 @@
 <?php
-namespace x3tech\LaravelShipper\Test\Fig;
+namespace x3tech\LaravelShipper\Test\DockerCompose;
 
 use PHPUnit_Framework_TestCase;
 
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
 class ContainerTest extends PHPUnit_Framework_TestCase
 {

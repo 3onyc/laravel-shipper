@@ -55,7 +55,7 @@ class CheckCommand extends Command
         $passedChecks = 0;
 
         $passedChecks += $this->checkExecutable('docker');
-        $passedChecks += $this->checkExecutable('fig');
+        $passedChecks += $this->checkExecutable('docker-compose');
         $passedChecks += $this->checkDatabaseConfig();
         $passedChecks += $this->checkQueueConfig();
 
@@ -66,7 +66,7 @@ class CheckCommand extends Command
     {
         $this->output->write(str_pad(
             sprintf("<comment>Checking for %s executable... </comment>", $name),
-            60
+            65
         ));
 
         $process = new Process(sprintf('which %s', $name));
@@ -87,7 +87,7 @@ class CheckCommand extends Command
         $default = $config['default'];
         $conn = $config['connections'][$default];
 
-        $this->output->write(str_pad("<comment>Checking database driver... </comment>", 60));
+        $this->output->write(str_pad("<comment>Checking database driver... </comment>", 65));
 
         if (!$this->supportReporter->isSupportedDatabase($conn['driver'])) {
             $this->error(sprintf('driver %s not supported', $conn['driver']));
@@ -101,7 +101,7 @@ class CheckCommand extends Command
             return true;
         }
 
-        $this->output->write(str_pad("<comment>Checking database config... </comment>", 60));
+        $this->output->write(str_pad("<comment>Checking database config... </comment>", 65));
         if ($conn['host'] !== 'db') {
             $this->error("Host not set to 'db'");
             return false;
@@ -117,7 +117,7 @@ class CheckCommand extends Command
         $default = $config['default'];
         $conn = $config['connections'][$default];
 
-        $this->output->write(str_pad("<comment>Checking queue driver... </comment>", 60));
+        $this->output->write(str_pad("<comment>Checking queue driver... </comment>", 65));
 
         if (!$this->supportReporter->isSupportedQueue($conn['driver'])) {
             $this->error(sprintf('driver %s not supported', $conn['driver']));
@@ -131,7 +131,7 @@ class CheckCommand extends Command
             return true;
         }
 
-        $this->output->write(str_pad("<comment>Checking queue config... </comment>", 60));
+        $this->output->write(str_pad("<comment>Checking queue config... </comment>", 65));
         if ($conn['host'] !== 'queue') {
             $this->error("Host not set to 'queue'");
             return false;

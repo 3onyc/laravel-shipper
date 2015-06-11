@@ -3,10 +3,10 @@ namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use Illuminate\Config\Repository;
 
-use x3tech\LaravelShipper\Fig\Definition;
-use x3tech\LaravelShipper\Fig\Container;
+use x3tech\LaravelShipper\DockerCompose\Definition;
+use x3tech\LaravelShipper\DockerCompose\Container;
 
-class FigApplicationBuildStep extends FigVolumesBuildStep
+class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
 {
     /**
      * @var Illuminate\Foundation\Application
