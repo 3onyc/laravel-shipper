@@ -20,7 +20,7 @@ create_project() {
 
   if [ ! -d "${versionDir}/vendor" ]; then
     echo "[${version}] Creating project..."
-    if [ -n "$DEBUG" ]; then
+    if [ -n "${DEBUG:-}" ]; then
       $COMPOSER_BIN create-project laravel/laravel "${versionDir}" "${version}"
     else
       $COMPOSER_BIN create-project laravel/laravel "${versionDir}" "${version}" > /dev/null
@@ -35,7 +35,7 @@ install_shipper() {
   cd "${versionDir}"
   if [ ! -d vendor/x3tech/laravel-shipper ]; then
     echo "[${version}] Installing laravel-shipper..."
-    if [ -n "$DEBUG" ]; then
+    if [ -n "${DEBUG:-}" ]; then
       $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}" > /dev/null
     else
       $COMPOSER_BIN require --prefer-source "x3tech/laravel-shipper dev-${BRANCH}"
