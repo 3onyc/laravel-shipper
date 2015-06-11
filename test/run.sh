@@ -56,8 +56,8 @@ sync_shipper() {
     --exclude=vendor/ \
     --exclude=.git/ \
     --exclude=test/functional \
-    "$PROJECT_DIR" \
-    vendor/x3tech/laravel-shipper/
+    "$PROJECT_DIR/" \
+    vendor/x3tech/laravel-shipper
 }
 
 add_provider() {
