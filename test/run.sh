@@ -39,6 +39,7 @@ test_version() {
 
   do_test "${version}" test_artisan_commands_present
   do_test "${version}" test_artisan_check_fail_incorrect_db
+  do_test "${version}" test_artisan_check_success
 }
 
 test_artisan_commands_present() {
@@ -60,14 +61,32 @@ test_artisan_commands_present() {
 test_artisan_check_fail_incorrect_db() {
   local checkCommand="$ARTISAN_BIN shipper:check"
 
-  echo "# Test artisan shipper:check"
+  echo "# artisan shipper:check fails on incorrect DB"
 
-  echo -n " - Show error message on incorrect DB... "
+  echo -n " - Displays error message... "
   (echo $($checkCommand) | grep "Host not set to 'db'" > /dev/null && echo_pass) || (echo_fail && return 1)
 
-  echo -n " - Exit code is 1 on fail... "
+  echo -n " - Exit code is 1... "
   set +e
   ($checkCommand > /dev/null && echo_fail && return 1) || (echo_pass && return 0)
+  set -e
+}
+
+test_artisan_check_success() {
+  local version="$1"
+  local checkCommand="$ARTISAN_BIN shipper:check"
+
+  echo "# artisan shipper:check succeeds when everything is correct"
+
+  if [ -f ".env" ]; then
+    sed -i "s/=localhost/=db/g" ".env"
+  else
+    sed -i "s/=> 'localhost'/=> 'db'/g" "$(get_conf_file "${version}" "database.php")"
+  fi
+
+  echo -n " - Exit code is 0... "
+  set +e
+  ($checkCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
   set -e
 }
 

@@ -22,6 +22,43 @@ get_versions_to_test() {
   esac
 }
 
+get_cache_conf_dir() {
+  _get_conf_dir "$FUNC_TEST_CACHE_DIR" "$1"
+}
+get_conf_dir() {
+  _get_conf_dir "$FUNC_TEST_DIR" "$1"
+}
+
+_get_conf_dir() {
+  local prefix="$1"
+  local version="$2"
+  local versionDir="${prefix}/${version}"
+
+  case "$version" in
+    4.*)
+      echo "${versionDir}/app/config"
+      ;;
+    5.*)
+      echo "${versionDir}/config"
+      ;;
+  esac
+}
+
+get_cache_conf_file() {
+  _get_conf_file "$FUNC_TEST_CACHE_DIR" "$1" "$2"
+}
+get_conf_file() {
+  _get_conf_file "$FUNC_TEST_DIR" "$1" "$2"
+}
+
+_get_conf_file() {
+  local prefix="$1"
+  local version="$2"
+  local fileName="$3"
+
+  echo "$(_get_conf_dir "${prefix}" "${version}")/${fileName}"
+}
+
 do_test() {
   local version="$1"
   local versionDir="${FUNC_TEST_DIR}/${version}"
@@ -30,5 +67,5 @@ do_test() {
   reset_install "${version}"
   cd "${versionDir}"
 
-  $testFn
+  $testFn "${version}"
 }

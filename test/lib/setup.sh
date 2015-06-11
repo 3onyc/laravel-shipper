@@ -105,7 +105,7 @@ add_provider_4() {
   local version="$1"
   local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
-  local configFile="${versionDir}/app/config/app.php"
+  local configFile="$(get_cache_conf_file "${version}" "app.php")"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/WorkbenchServiceProvider',/WorkbenchServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
@@ -117,7 +117,7 @@ add_provider_50() {
   local version="$1"
   local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
-  local configFile="${versionDir}/config/app.php"
+  local configFile="$(get_cache_conf_file "${version}" "app.php")"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/RouteServiceProvider',/RouteServiceProvider', 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
@@ -129,7 +129,7 @@ add_provider_51() {
   local version="$1"
   local versionDir="${FUNC_TEST_CACHE_DIR}/${version}"
 
-  local configFile="${versionDir}/config/app.php"
+  local configFile="$(get_cache_conf_file "${version}" "app.php")"
   if ! grep 'ShipperProvider' "${configFile}" > /dev/null; then
     sed -i \
       "s/RouteServiceProvider::class,/RouteServiceProvider::class, 'x3tech\\\\LaravelShipper\\\\Provider\\\\ShipperProvider',/g" \
