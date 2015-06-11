@@ -2,6 +2,7 @@
 set -euo pipefail
 [ -n "${DEBUG:-}" ] && set -x
 
+## Vars {{{
 if [ -n "${PHP_VERSION:-}" -a -n "${PHP_BIN:-}" ]; then
   # Skip
   echo > /dev/null
@@ -20,7 +21,9 @@ readonly PROJECT_DIR="$(pwd)"
 readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
 
 readonly BRANCH="feature-multi-ver"
+## }}} Vars
 
+## Setup/Teardown {{{
 cleanup() {
   rm -rf "${FUNC_TEST_DIR}"
 }
@@ -88,7 +91,9 @@ add_provider() {
       ;;
   esac
 }
+## }}} Setup/Teardown
 
+## Functional Tests {{{
 test_version() {
   local VERSION="$1"
   local VERSION_DIR="${FUNC_TEST_DIR}/${VERSION}"
@@ -107,6 +112,9 @@ test_artisan_commands() {
   fi
 }
 
+## }}} Functional Tests
+
+## Utility {{{
 echo_fail() {
   echo -e "\e[31mFAIL\e[0m"
 }
@@ -114,6 +122,7 @@ echo_fail() {
 echo_pass() {
   echo -e "\e[32mPASS\e[0m"
 }
+## }}} Utility
 
 main() {
   local COMMAND="${1:-default}"
