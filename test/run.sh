@@ -138,7 +138,7 @@ test_artisan_config_publish_success() {
 
   case "${version}" in
     4.*)
-      local confPath="app/config/packages/laravel-shipper" 
+      local confPath="app/config/packages/x3tech/laravel-shipper/config.php"
       local publishCommand="$ARTISAN_BIN config:publish x3tech/laravel-shipper"
       ;;
     5.*)
@@ -152,7 +152,7 @@ test_artisan_config_publish_success() {
   ($publishCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
 
   echo -n " - ${confPath} exists... "
-  ([ -e "${confPath}" ] && echo_pass && return 0) || (echo_fail && return 1)
+  ([ -f "${confPath}" ] && echo_pass && return 0) || (echo_fail && return 1)
   set -e
 }
 
