@@ -5,22 +5,14 @@ Integrating Laravel, Docker and Fig
 ## Requirements
 
 * [Docker](https://docker.com/)
-* [Fig](http://www.fig.sh/)
+* [Docker-Compose](https://docs.docker.com/compose/)
 
 ## Instructions
 
 1. Add to `composer.json`
 
-   For Laravel 4.2
-
    ```bash
-   composer require 'x3tech/laravel-shipper' 'dev-laravel-4.2'
-   ```
-
-   For Laravel 5
-
-   ```bash
-   composer require 'x3tech/laravel-shipper' '~0.4'
+   composer require 'x3tech/laravel-shipper' '>=0.5'
    ```
 
 2. Add the provider to `config/app.php`
@@ -44,7 +36,7 @@ Integrating Laravel, Docker and Fig
 
    This allows for easier environment switching, just put `APP_ENV=<env>` in front
    of artisan calls to execute them for that environment.
-6. Generate the `fig.yml` config file
+6. Generate the `docker-compose.yml` config file
 
    In Laravel 4.2
 
@@ -55,22 +47,22 @@ Integrating Laravel, Docker and Fig
    `./artisan shipper:create:all`
 
 7. Start the containers
-   `fig up`
+   `docker-compose up`
 8. Wait until fig started the containers, and then visit http://localhost:8080
 
 ## FAQ
 
 ### How do I run a command on my project (Such as artisan)
 
-`fig run --rm app <command>`
+`docker-compose run --rm app <command>`
 
 **Examples**
 
 Artisan:
 
-`fig run --rm app ./artisan`
+`docker-compose run --rm app ./artisan`
 
 PHPUnit:
 
-`fig run --rm app vendor/bin/phpunit'
+`docker-compose run --rm app vendor/bin/phpunit'
 
