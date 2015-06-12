@@ -24,7 +24,7 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
             ->with('shipper', null)
-            ->andReturn(include LARAVEL_SHIPPER_ROOT . '/config/config.php')
+            ->andReturn(include LARAVEL_SHIPPER_ROOT . '/src/config/config.php')
             ->getMock()
             ->shouldReceive('get')
             ->with('database', null)

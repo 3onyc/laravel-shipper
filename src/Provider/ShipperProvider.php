@@ -86,15 +86,15 @@ class ShipperProvider extends ServiceProvider
 
     private function boot5()
     {
-        $this->loadViewsFrom(LARAVEL_SHIPPER_ROOT . '/views', 'shipper');
-        $this->mergeConfigFrom(LARAVEL_SHIPPER_ROOT . '/config/config.php', 'shipper');
+        $this->loadViewsFrom(LARAVEL_SHIPPER_ROOT . '/src/views', 'shipper');
+        $this->mergeConfigFrom(LARAVEL_SHIPPER_ROOT . '/src/config/config.php', 'shipper');
 
         $this->publishes(array(
-            LARAVEL_SHIPPER_ROOT . '/views' => base_path('resources/views/vendor/shipper')
+            LARAVEL_SHIPPER_ROOT . '/src/views' => base_path('resources/views/vendor/shipper')
         ), 'views');
 
         $this->publishes(array(
-            LARAVEL_SHIPPER_ROOT . '/config/config.php' => config_path('shipper.php')
+            LARAVEL_SHIPPER_ROOT . '/src/config/config.php' => config_path('shipper.php')
         ), 'config');
     }
 
