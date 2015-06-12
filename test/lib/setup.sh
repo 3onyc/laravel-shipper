@@ -75,6 +75,7 @@ sync_shipper() {
   echo "[${version}] Syncing laravel-shipper..."
   cd "${versionDir}"
   rsync \
+    --delete \
     --checksum \
     --archive \
     --exclude=vendor/ \
