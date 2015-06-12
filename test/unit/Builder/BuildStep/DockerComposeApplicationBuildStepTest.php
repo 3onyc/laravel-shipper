@@ -7,6 +7,7 @@ use Mockery as m;
 use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeApplicationBuildStep;
 use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\SupportReporter;
+use x3tech\LaravelShipper\CompatBridge;
 
 class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBase
 {
@@ -29,13 +30,16 @@ class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBa
             ->andReturn($env)
             ->getMock();
 
-        $config = m::mock('Illuminate\Config\Repository')
-            ->shouldReceive('get')
-            ->with('shipper')
-            ->andReturn($this->cfg)
-            ->getMock();
+        $compat = new CompatBridge(
+            '5.0',
+            m::mock('Illuminate\Config\Repository')
+                ->shouldReceive('get')
+                ->with('shipper', null)
+                ->andReturn($this->cfg)
+                ->getMock()
+        );
 
-        return new DockerComposeApplicationBuildStep($app, $config);
+        return new DockerComposeApplicationBuildStep($app, $compat);
     }
 
     public function testWithoutVolumes()

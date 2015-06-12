@@ -8,6 +8,8 @@ use Illuminate\Config\Repository;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use x3tech\LaravelShipper\CompatBridge;
+
 use RuntimeException;
 
 class CreateDockerCommand extends Command
@@ -32,9 +34,9 @@ class CreateDockerCommand extends Command
     protected $app;
 
     /**
-     * @var Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     /**
      * @var Illuminate\View\Factory|Illuminate\View\Environment
@@ -50,13 +52,13 @@ class CreateDockerCommand extends Command
      */
     public function __construct(
         \Illuminate\Foundation\Application $app,
-        \Illuminate\Config\Repository $config,
+        CompatBridge $compat,
         $view
     ) {
         parent::__construct();
 
         $this->app = $app;
-        $this->config = $config;
+        $this->compat = $compat;
         $this->view = $view;
     }
 
@@ -67,7 +69,7 @@ class CreateDockerCommand extends Command
      */
     public function fire()
     {
-        $cfg = $this->config->get('shipper');
+        $cfg = $this->compat->getShipperConfig();
         $env = $this->app->environment();
 
         $this->info("Creating Dockerfile...");

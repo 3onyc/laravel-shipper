@@ -6,6 +6,7 @@ use Mockery as m;
 
 use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeQueueBuildStep;
 use x3tech\LaravelShipper\SupportReporter;
+use x3tech\LaravelShipper\CompatBridge;
 
 class DockerComposeQueueBuildStepTest extends DockerComposeBuildStepTestBase
 {
@@ -30,10 +31,10 @@ class DockerComposeQueueBuildStepTest extends DockerComposeBuildStepTestBase
 
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
-            ->with('shipper')
+            ->with('shipper', null)
             ->andReturn($this->cfg)
             ->shouldReceive('get')
-            ->with('queue')
+            ->with('queue', null)
             ->andReturn(array(
                 'default' => 'queue',
                 'connections' => array(
@@ -44,7 +45,9 @@ class DockerComposeQueueBuildStepTest extends DockerComposeBuildStepTestBase
             ))
             ->getMock();
 
-        return new DockerComposeQueueBuildStep($app, $config, new SupportReporter);
+        $compat = new CompatBridge('5.0', $config);
+
+        return new DockerComposeQueueBuildStep($app, $compat, new SupportReporter);
     }
 
     public function testBeanstalkd()

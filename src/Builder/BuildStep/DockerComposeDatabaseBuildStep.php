@@ -1,8 +1,7 @@
 <?php
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
-use Illuminate\Config\Repository;
-
+use x3tech\LaravelShipper\CompatBridge;
 use x3tech\LaravelShipper\SupportReporter;
 use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\DockerCompose\Container;
@@ -15,9 +14,9 @@ use x3tech\LaravelShipper\DockerCompose\Container;
 class DockerComposeDatabaseBuildStep implements DockerComposeBuildStepInterface
 {
     /**
-     * @var Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     protected static $supported = array(
         'mysql' => 'addMysql',
@@ -25,10 +24,10 @@ class DockerComposeDatabaseBuildStep implements DockerComposeBuildStepInterface
     );
 
     public function __construct(
-        \Illuminate\Config\Repository $config,
+        CompatBridge $compat,
         SupportReporter $supportReporter
     ) {
-        $this->config = $config;
+        $this->compat = $compat;
 
         array_map(
             array($supportReporter, 'addSupportedDatabase'),
@@ -85,7 +84,7 @@ class DockerComposeDatabaseBuildStep implements DockerComposeBuildStepInterface
      */
     protected function getConnection()
     {
-        $dbConfig = $this->config->get('database');
+        $dbConfig = $this->compat->getConfig('database');
         return $dbConfig['connections'][$dbConfig['default']];
     }
 

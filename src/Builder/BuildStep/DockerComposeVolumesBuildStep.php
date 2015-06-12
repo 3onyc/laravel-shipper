@@ -3,6 +3,7 @@
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
 use x3tech\LaravelShipper\DockerCompose\Container;
+use x3tech\LaravelShipper\CompatBridge;
 
 abstract class DockerComposeVolumesBuildStep implements DockerComposeBuildStepInterface
 {
@@ -13,11 +14,11 @@ abstract class DockerComposeVolumesBuildStep implements DockerComposeBuildStepIn
      */
     protected function addVolumes(
         Container $container,
-        \Illuminate\Config\Repository $config,
+        CompatBridge $compat,
         \Illuminate\Foundation\Application $app
     ) {
         $env = $app->environment();
-        $cfg = $config->get('shipper');
+        $cfg = $compat->getShipperConfig();
 
         if (!in_array($env, $cfg['mount_volumes'])) {
             return;

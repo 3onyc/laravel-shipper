@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Yaml\Yaml;
 
 use x3tech\LaravelShipper\Builder\DockerComposeBuilder;
+use x3tech\LaravelShipper\CompatBridge;
 
 class CreateDockerComposeCommand extends Command
 {
@@ -36,10 +37,12 @@ class CreateDockerComposeCommand extends Command
      * @return void
      */
     public function __construct(
+        CompatBridge $compat,
         DockerComposeBuilder $dockerComposeBuilder
     ) {
         parent::__construct();
 
+        $this->compat = $compat;
         $this->dockerComposeBuilder = $dockerComposeBuilder;
     }
 
@@ -51,17 +54,17 @@ class CreateDockerComposeCommand extends Command
     public function fire()
     {
         $this->info('Creating docker-compose.yml...');
-        $this->createFigYaml();
+        $this->createDockerComposeYaml();
     }
 
-    protected function createFigYaml()
+    protected function createDockerComposeYaml()
     {
         $structure = $this->dockerComposeBuilder->build();
 
-        $figPath = sprintf('%s/docker-compose.yml', base_path());
-        $figContents = Yaml::dump($structure, 3);
+        $composePath = sprintf('%s/docker-compose.yml', base_path());
+        $composeContents = Yaml::dump($structure, 3);
 
-        if (file_put_contents($figPath, $figContents) === false) {
+        if (file_put_contents($composePath, $composeContents) === false) {
             throw new RuntimeException(sprintf(
                 "Failed to write docker-compose.yml, please check whether you have write permissions for '%s'",
                 base_path()
@@ -79,8 +82,8 @@ class CreateDockerComposeCommand extends Command
 
     protected function addDatabase(array $structure)
     {
-        $default = $this->config->get('database.default');
-        $connections = $this->config->get('database.connections');
+        $default = $this->compat->getConfig('database.default');
+        $connections = $this->compat->getConfig('database.connections');
         $connection = $connections[$default];
 
         switch ($connection['driver']) {
@@ -119,9 +122,9 @@ class CreateDockerComposeCommand extends Command
     protected function addQueue(array $structure)
     {
         $env = $this->config->getEnvironment();
-        $cfg = $this->config->get('shipper');
-        $default = $this->config->get('queue.default');
-        $connections = $this->config->get('queue.connections');
+        $cfg = $this->compat->getShipperConfig();
+        $default = $this->compat->getConfig('queue.default');
+        $connections = $this->compat->getConfig('queue.connections');
         $connection = $connections[$default];
 
         switch ($connection['driver']) {

@@ -1,8 +1,7 @@
 <?php
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
-use Illuminate\Config\Repository;
-
+use x3tech\LaravelShipper\CompatBridge;
 use x3tech\LaravelShipper\SupportReporter;
 use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\DockerCompose\Container;
@@ -15,9 +14,9 @@ use x3tech\LaravelShipper\DockerCompose\Container;
 class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
 {
     /**
-     * @var Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     /**
      * @var Illuminate\Foundation\Application
@@ -30,11 +29,11 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
 
     public function __construct(
         \Illuminate\Foundation\Application $app,
-        \Illuminate\Config\Repository $config,
+        CompatBridge $compat,
         SupportReporter $supportReporter
     ) {
         $this->app = $app;
-        $this->config = $config;
+        $this->compat = $compat;
 
         array_map(
             array($supportReporter, 'addSupportedQueue'),
@@ -91,7 +90,7 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
      */
     protected function getConnection()
     {
-        $queueConfig = $this->config->get('queue');
+        $queueConfig = $this->compat->getConfig('queue');
         return $queueConfig['connections'][$queueConfig['default']];
     }
 
@@ -130,7 +129,7 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
             $worker->addLink($definition->getContainer('db'));
         }
 
-        $this->addVolumes($worker, $this->config, $this->app);
+        $this->addVolumes($worker, $this->compat, $this->app);
         $definition->addContainer($worker);
     }
 }

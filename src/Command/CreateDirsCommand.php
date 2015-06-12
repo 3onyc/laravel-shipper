@@ -6,6 +6,8 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use x3tech\LaravelShipper\CompatBridge;
+
 class CreateDirsCommand extends Command
 {
     /**
@@ -23,9 +25,9 @@ class CreateDirsCommand extends Command
     protected $description = "Create volume directories";
 
     /**
-     * @var Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     /**
      * Create a new command instance.
@@ -33,11 +35,11 @@ class CreateDirsCommand extends Command
      * @return void
      */
     public function __construct(
-        \Illuminate\Config\Repository $config
+        CompatBridge $compat
     ) {
         parent::__construct();
 
-        $this->config = $config;
+        $this->compat = $compat;
     }
 
     /**
@@ -49,7 +51,7 @@ class CreateDirsCommand extends Command
     {
         $this->info("Creating volume directories...");
 
-        $cfg = $this->config->get('shipper');
+        $cfg = $this->compat->getShipperConfig();
         foreach ($cfg['volumes'] as $volume) {
             $src = $this->getSource($volume);
 

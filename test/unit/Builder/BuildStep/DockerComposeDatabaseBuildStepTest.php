@@ -8,6 +8,7 @@ use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeDatabaseBuildStep;
 use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\DockerCompose\Container;
 use x3tech\LaravelShipper\SupportReporter;
+use x3tech\LaravelShipper\CompatBridge;
 
 class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
 {
@@ -22,10 +23,11 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
     {
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
-            ->with('shipper::config')
+            ->with('shipper', null)
             ->andReturn(include LARAVEL_SHIPPER_ROOT . '/config/config.php')
+            ->getMock()
             ->shouldReceive('get')
-            ->with('database')
+            ->with('database', null)
             ->andReturn(array(
                 'default' => 'db',
                 'connections' => array(
@@ -39,7 +41,9 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
             ))
             ->getMock();
 
-        return new DockerComposeDatabaseBuildStep($config, new SupportReporter);
+        $compat = new CompatBridge('5.0', $config);
+
+        return new DockerComposeDatabaseBuildStep($compat, new SupportReporter);
     }
 
     public function testMysql()

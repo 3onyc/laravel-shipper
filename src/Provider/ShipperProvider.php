@@ -3,6 +3,7 @@ namespace x3tech\LaravelShipper\Provider;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Container\BindingResolutionException;
+use Illuminate\Foundation\Application;
 
 use x3tech\LaravelShipper\Command\CheckCommand;
 use x3tech\LaravelShipper\Command\CreateDockerComposeCommand;
@@ -11,21 +12,35 @@ use x3tech\LaravelShipper\Command\CreateDirsCommand;
 use x3tech\LaravelShipper\Command\CreateAllCommand;
 
 use x3tech\LaravelShipper\Builder\DockerComposeBuilder;
-
 use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeApplicationBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeDatabaseBuildStep;
 use x3tech\LaravelShipper\Builder\BuildStep\DockerComposeQueueBuildStep;
+
+use x3tech\LaravelShipper\CompatBridge;
 
 class ShipperProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind('laravel_shipper.command.create_docker_compose', function($app) {
-            return new CreateDockerComposeCommand($app['laravel_shipper.docker_compose_builder']);
+        $this->app->bind(
+            'laravel_shipper.compat_bridge',
+            'x3tech\LaravelShipper\CompatBridge'
+        );
+        $this->app->singleton('x3tech\LaravelShipper\CompatBridge', function($app) {
+            return new CompatBridge(Application::VERSION, $app['config']);
         });
+
         $this->app->bind('laravel_shipper.command.create_docker', function($app) {
-            return new CreateDockerCommand($app, $app['config'], $app['view']);
+            return new CreateDockerCommand(
+                $app,
+                $app['laravel_shipper.compat_bridge'],
+                $app['view']
+            );
         });
+        $this->app->bind(
+            'laravel_shipper.command.create_docker_compose',
+            'x3tech\LaravelShipper\Command\CreateDockerComposeCommand'
+        );
         $this->app->bind(
             'laravel_shipper.command.create_dirs',
             'x3tech\LaravelShipper\Command\CreateDirsCommand'
@@ -39,19 +54,19 @@ class ShipperProvider extends ServiceProvider
             'x3tech\LaravelShipper\Command\CheckCommand'
         );
 
+        $this->app->singleton(
+            'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
+        );
         $this->app->bind(
             'laravel_shipper.docker_compose_builder',
             'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
         );
-        $this->app->bind(
-            'laravel_shipper.support_reporter',
-            'x3tech\LaravelShipper\SupportReporter'
-        );
-        $this->app->singleton(
-            'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
-        );
 
         $this->app->singleton(
+            'x3tech\LaravelShipper\SupportReporter'
+        );
+        $this->app->bind(
+            'laravel_shipper.support_reporter',
             'x3tech\LaravelShipper\SupportReporter'
         );
     }

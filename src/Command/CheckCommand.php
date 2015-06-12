@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Process\Process;
 
 use x3tech\LaravelShipper\SupportReporter;
+use x3tech\LaravelShipper\CompatBridge;
 
 class CheckCommand extends Command
 {
@@ -26,9 +27,9 @@ class CheckCommand extends Command
     protected $description = "Check if requirements for laravel-shipper are met.";
 
     /**
-     * @var \Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     /**
      * @var SupportReporter
@@ -36,12 +37,12 @@ class CheckCommand extends Command
     protected $supportReporter;
 
     public function __construct(
-        \Illuminate\Config\Repository $config,
+        CompatBridge $compat,
         SupportReporter $supportReporter
     ) {
         parent::__construct();
 
-        $this->config = $config;
+        $this->compat = $compat;
         $this->supportReporter = $supportReporter;
     }
 
@@ -83,9 +84,9 @@ class CheckCommand extends Command
 
     protected function checkDatabaseConfig()
     {
-        $config = $this->config->get('database');
-        $default = $config['default'];
-        $conn = $config['connections'][$default];
+        $cfg = $this->compat->getConfig('database');
+        $default = $cfg['default'];
+        $conn = $cfg['connections'][$default];
 
         $this->output->write(str_pad("<comment>Checking database driver... </comment>", 65));
 
@@ -113,9 +114,9 @@ class CheckCommand extends Command
 
     protected function checkQueueConfig()
     {
-        $config = $this->config->get('queue');
-        $default = $config['default'];
-        $conn = $config['connections'][$default];
+        $cfg = $this->compat->getConfig('queue');
+        $default = $cfg['default'];
+        $conn = $cfg['connections'][$default];
 
         $this->output->write(str_pad("<comment>Checking queue driver... </comment>", 65));
 

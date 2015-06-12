@@ -1,10 +1,9 @@
 <?php
 namespace x3tech\LaravelShipper\Builder\BuildStep;
 
-use Illuminate\Config\Repository;
-
 use x3tech\LaravelShipper\DockerCompose\Definition;
 use x3tech\LaravelShipper\DockerCompose\Container;
+use x3tech\LaravelShipper\CompatBridge;
 
 class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
 {
@@ -14,16 +13,16 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
     protected $app;
 
     /**
-     * @var Illuminate\Config\Repository
+     * @var x3tech\LaravelShipper\CompatBridge
      */
-    protected $config;
+    protected $compat;
 
     public function __construct(
         \Illuminate\Foundation\Application $app,
-        \Illuminate\Config\Repository $config
+        CompatBridge $compat
     ) {
         $this->app = $app;
-        $this->config = $config;
+        $this->compat = $compat;
     }
 
     /**
@@ -32,7 +31,7 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
     public function run(Definition $definition)
     {
         $env = $this->app->environment();
-        $cfg = $this->config->get('shipper');
+        $cfg = $this->compat->getShipperConfig();
 
         $app = new Container('app');
         $app->setBuild('.');
@@ -40,7 +39,7 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
         $app->setEnvironment(array(
             'APP_ENV' => $env
         ));
-        $this->addVolumes($app, $this->config, $this->app);
+        $this->addVolumes($app, $this->compat, $this->app);
 
         $definition->addContainer($app);
     }
