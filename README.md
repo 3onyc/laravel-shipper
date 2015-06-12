@@ -26,29 +26,15 @@ Integrating Laravel, Docker and Fig
 
 3. If using MySQL, set host to `db` in `database.php`
 4. If using beanstalkd, set host to `queue` in `queue.php`
-5. (Laravel 4.2 Only) Modify the env detection in `bootstrap/start.php` as follows
-
-   ```php
-   $env = $app->detectEnvironment(function () {
-       return getenv('APP_ENV') ?: 'production';
-   });
-   ```
-
-   This allows for easier environment switching, just put `APP_ENV=<env>` in front
-   of artisan calls to execute them for that environment.
-6. Generate the `docker-compose.yml` config file
-
-   In Laravel 4.2
-
-   `APP_ENV=local ./artisan shipper:create:all`
-
-   In Laravel 5 (APP_ENV is set in .env)
+5. Generate the `docker-compose.yml` config file
 
    `./artisan shipper:create:all`
 
-7. Start the containers
-   `docker-compose up`
-8. Wait until fig started the containers, and then visit http://localhost:8080
+7. Build and start the containers
+
+   `docker-compose build && docker-compose up`
+
+8. Wait until the containers are started, and visit http://localhost:8080
 
 ## FAQ
 
