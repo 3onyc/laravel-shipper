@@ -23,7 +23,7 @@ readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
 readonly FUNC_TEST_CACHE_DIR="${PROJECT_DIR}/test/functional/_cache"
 
 # Branch to initially install from (Will later be copied over by sync_shipper)
-readonly BRANCH="feature-multi-ver"
+readonly BRANCH="develop"
 ## }}} Vars
 
 ## Functional Tests {{{
