@@ -21,6 +21,7 @@ env:
   - LARAVEL_VERSION=5.0
   - LARAVEL_VERSION=5.1
 matrix:
+  fast_finish: true
   exclude:
     - php: 5.3
       env: LARAVEL_VERSION=4.2
