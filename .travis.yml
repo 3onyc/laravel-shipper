@@ -10,6 +10,10 @@ php:
   - 5.4
   - 5.3
   - hhvm
+cache:
+  directories:
+    - $HOME/.composer/cache
+    - test/functional/_cache
 env:
   - LARAVEL_VERSION=4.0
   - LARAVEL_VERSION=4.1
