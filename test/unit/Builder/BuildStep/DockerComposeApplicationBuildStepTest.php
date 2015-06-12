@@ -13,7 +13,7 @@ class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBa
 {
     protected function setUp()
     {
-        $this->cfg = include LARAVEL_SHIPPER_ROOT . '/src/config/config.php';
+        $this->cfg = include LARAVEL_SHIPPER_CONFIG . '/config.php';
     }
 
     /**

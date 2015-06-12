@@ -81,20 +81,21 @@ class ShipperProvider extends ServiceProvider
                 return $app['config'];
             });
         }
-        $this->package('x3tech/laravel-shipper', 'shipper', LARAVEL_SHIPPER_ROOT);
+        $this->app['view']->addNamespace('shipper', LARAVEL_SHIPPER_VIEWS);
+        $this->app['config']->addNamespace('shipper', LARAVEL_SHIPPER_CONFIG);
     }
 
     private function boot5()
     {
-        $this->loadViewsFrom(LARAVEL_SHIPPER_ROOT . '/src/views', 'shipper');
-        $this->mergeConfigFrom(LARAVEL_SHIPPER_ROOT . '/src/config/config.php', 'shipper');
+        $this->loadViewsFrom(LARAVEL_SHIPPER_VIEWS, 'shipper');
+        $this->mergeConfigFrom(LARAVEL_SHIPPER_CONFIG . '/config.php', 'shipper');
 
         $this->publishes(array(
-            LARAVEL_SHIPPER_ROOT . '/src/views' => base_path('resources/views/vendor/shipper')
+            LARAVEL_SHIPPER_VIEWS => base_path('resources/views/vendor/shipper')
         ), 'views');
 
         $this->publishes(array(
-            LARAVEL_SHIPPER_ROOT . '/src/config/config.php' => config_path('shipper.php')
+            LARAVEL_SHIPPER_CONFIG . '/config.php' => config_path('shipper.php')
         ), 'config');
     }
 
