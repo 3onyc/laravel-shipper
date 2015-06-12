@@ -7,9 +7,6 @@ cleanup() {
 create_versions() {
   local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
 
-  mkdir -p "${FUNC_TEST_DIR}"
-  mkdir -p "${FUNC_TEST_CACHE_DIR}"
-
   for version in $laravelVersions; do
     create_version "${version}"
   done
@@ -19,6 +16,9 @@ create_version() {
   local version="$1"
 
   echo "[${version}] Creating environment..."
+
+  mkdir -p "${FUNC_TEST_DIR}"
+  mkdir -p "${FUNC_TEST_CACHE_DIR}"
 
   create_project "${version}"
   install_shipper "${version}"

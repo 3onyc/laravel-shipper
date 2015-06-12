@@ -168,6 +168,12 @@ main() {
     cleanup)
       cleanup
       ;;
+    single)
+      local laravelVersion="${LARAVEL_VERSION}"
+
+      create_version "${laravelVersion}"
+      test_version "${laravelVersion}"
+      ;;
     test)
       main "unit-test"
       main "func-test"
@@ -183,7 +189,7 @@ main() {
       main "test"
       ;;
     *)
-      echo "run.sh (prepare|test|func-test|unit-test|cleanup|run)"
+      echo "run.sh (prepare|test|func-test|unit-test|cleanup|run|single)"
       exit 64
   esac
 }
