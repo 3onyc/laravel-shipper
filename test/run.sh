@@ -30,7 +30,7 @@ readonly BRANCH="develop"
 test_versions() {
   local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
   for version in $laravelVersions; do
-    echo "[${version} Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
+    echo "[${version}] Running tests for laravel-shipper on PHP ${PHP_VERSION}..."
     test_version "${version}"
   done
 }
@@ -40,6 +40,10 @@ test_version() {
   do_test "${version}" test_artisan_commands_present
   do_test "${version}" test_artisan_check_fail_incorrect_db
   do_test "${version}" test_artisan_check_success
+  do_test "${version}" test_artisan_create_docker_success
+  do_test "${version}" test_artisan_create_docker_compose_success
+  do_test "${version}" test_artisan_create_dirs_success
+  do_test "${version}" test_artisan_config_publish_success
 }
 
 test_artisan_commands_present() {
@@ -78,15 +82,77 @@ test_artisan_check_success() {
 
   echo "# artisan shipper:check succeeds when everything is correct"
 
-  if [ -f ".env" ]; then
-    sed -i "s/=localhost/=db/g" ".env"
-  else
-    sed -i "s/=> 'localhost'/=> 'db'/g" "$(get_conf_file "${version}" "database.php")"
-  fi
+  fix_db_conf "${version}"
 
   echo -n " - Exit code is 0... "
   set +e
   ($checkCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
+  set -e
+}
+
+test_artisan_create_docker_success() {
+  echo "# artisan shipper:create:docker produces a working Dockerfile"
+  local createCommand="$ARTISAN_BIN shipper:create:docker"
+
+  fix_db_conf "${version}"
+
+  echo -n " - Exit code is 0... "
+  set +e
+  ($createCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
+  set -e
+}
+
+test_artisan_create_docker_compose_success() {
+  echo "# artisan shipper:create:docker produces a working docker-compose.yml"
+  local createCommand="$ARTISAN_BIN shipper:create:docker-compose"
+
+  fix_db_conf "${version}"
+  echo -n " - Exit code is 0... "
+  set +e
+  ($createCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
+  set -e
+}
+
+test_artisan_create_dirs_success() {
+  echo "# artisan shipper:create:dirs creates the correct directories"
+  local createCommand="$ARTISAN_BIN shipper:create:dirs"
+
+  fix_db_conf "${version}"
+  echo -n " - Exit code is 0... "
+  set +e
+  ($createCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
+  set -e
+
+  echo -n " - app/storage/logs/hhvm exists... "
+  ([ -d 'app/storage/logs/hhvm' ] && echo_pass && return 0) || (echo_fail && return 1)
+
+  echo -n " - app/storage/logs/nginx exists... "
+  ([ -d 'app/storage/logs/nginx' ] && echo_pass && return 0) || (echo_fail && return 1)
+}
+
+test_artisan_config_publish_success() {
+  local version="$1"
+
+  echo "# artisan config:publish creates config for laravel-shipper"
+
+
+  case "${version}" in
+    4.*)
+      local confPath="app/config/packages/laravel-shipper" 
+      local publishCommand="$ARTISAN_BIN config:publish x3tech/laravel-shipper"
+      ;;
+    5.*)
+      local confPath="config/shipper.php"
+      local publishCommand="$ARTISAN_BIN vendor:publish"
+      ;;
+  esac
+
+  set +e
+  echo -n " - Exit code is 0... "
+  ($publishCommand > /dev/null && echo_pass && return 0) || (echo_fail && return 1)
+
+  echo -n " - ${confPath} exists... "
+  ([ -e "${confPath}" ] && echo_pass && return 0) || (echo_fail && return 1)
   set -e
 }
 

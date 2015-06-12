@@ -69,3 +69,13 @@ do_test() {
 
   $testFn "${version}"
 }
+
+fix_db_conf() {
+  local version="$1"
+
+  if [ -f ".env" ]; then
+    sed -i "s/=localhost/=db/g" ".env"
+  else
+    sed -i "s/=> 'localhost'/=> 'db'/g" "$(get_conf_file "${version}" "database.php")"
+  fi
+}
