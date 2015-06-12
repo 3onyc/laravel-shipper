@@ -1,3 +1,9 @@
+# 0.5.0
+
+* Make laravel-shipper work with all versions of laravel
+* Add basic functional tests
+* Use `docker-compose` instead of `fig`
+
 # 0.4.1
 
 * Update HHVM to 3.7.0

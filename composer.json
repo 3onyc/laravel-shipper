@@ -1,11 +1,11 @@
 {
     "name": "x3tech/laravel-shipper",
     "description": "Integrate Docker into your Laravel development workflow",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "type": "library",
     "keywords": [ "laravel", "artisan", "docker" ],
     "homepage": "https://github.com/3onyc/laravel-shipper",
-    "time": "2014-10-25",
+    "time": "2015-06-12",
     "license": "MIT",
     "authors": [{
         "name": "3ony",
