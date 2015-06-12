@@ -20,9 +20,14 @@ class CompatBridge
     /**
      * Laravel configuration
      *
-     * @var ?!?
+     * @var \Illuminate\Config\Repository
      */
     protected $config;
+
+    /**
+     * @var \Illuminate\Foundation\Application
+     */
+    protected $app;
 
     /**
      * @param string $laravelVersion
@@ -30,9 +35,11 @@ class CompatBridge
      */
     public function __construct(
         $laravelVersion,
+        \Illuminate\Foundation\Application $app,
         \Illuminate\Config\Repository $config
     ) {
         $this->laravelVersion = $this->versionRemovePatchLevel($laravelVersion);
+        $this->app = $app;
         $this->config = $config;
     }
 
@@ -40,6 +47,11 @@ class CompatBridge
     {
         $parts = explode('.', $version, 3);
         return $parts[0] . '.' . $parts[1];
+    }
+
+    public function getEnvironment()
+    {
+        return $this->app->environment();
     }
 
     /**

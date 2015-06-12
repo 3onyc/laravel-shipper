@@ -21,6 +21,11 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
      */
     protected function getStep($driver)
     {
+        $app = m::mock('Illuminate\Foundation\Application')
+            ->shouldReceive('environment')
+            ->andReturn('production')
+            ->getMock();
+
         $config = m::mock('Illuminate\Config\Repository')
             ->shouldReceive('get')
             ->with('shipper', null)
@@ -41,7 +46,7 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
             ))
             ->getMock();
 
-        $compat = new CompatBridge('5.0', $config);
+        $compat = new CompatBridge('5.0', $app, $config);
 
         return new DockerComposeDatabaseBuildStep($compat, new SupportReporter);
     }

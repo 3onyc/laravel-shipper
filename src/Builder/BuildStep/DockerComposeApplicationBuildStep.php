@@ -18,10 +18,8 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
     protected $compat;
 
     public function __construct(
-        \Illuminate\Foundation\Application $app,
         CompatBridge $compat
     ) {
-        $this->app = $app;
         $this->compat = $compat;
     }
 
@@ -30,7 +28,7 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
      */
     public function run(Definition $definition)
     {
-        $env = $this->app->environment();
+        $env = $this->compat->getEnvironment();
         $cfg = $this->compat->getShipperConfig();
 
         $app = new Container('app');
@@ -39,7 +37,7 @@ class DockerComposeApplicationBuildStep extends DockerComposeVolumesBuildStep
         $app->setEnvironment(array(
             'APP_ENV' => $env
         ));
-        $this->addVolumes($app, $this->compat, $this->app);
+        $this->addVolumes($app, $this->compat);
 
         $definition->addContainer($app);
     }

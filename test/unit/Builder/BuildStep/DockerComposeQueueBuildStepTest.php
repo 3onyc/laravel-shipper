@@ -45,9 +45,9 @@ class DockerComposeQueueBuildStepTest extends DockerComposeBuildStepTestBase
             ))
             ->getMock();
 
-        $compat = new CompatBridge('5.0', $config);
+        $compat = new CompatBridge('5.0', $app, $config);
 
-        return new DockerComposeQueueBuildStep($app, $compat, new SupportReporter);
+        return new DockerComposeQueueBuildStep($compat, new SupportReporter);
     }
 
     public function testBeanstalkd()

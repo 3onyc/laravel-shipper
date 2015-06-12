@@ -18,21 +18,14 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
      */
     protected $compat;
 
-    /**
-     * @var Illuminate\Foundation\Application
-     */
-    protected $app;
-
     protected static $supported = array(
         'beanstalkd' => 'addBeanstalkd'
     );
 
     public function __construct(
-        \Illuminate\Foundation\Application $app,
         CompatBridge $compat,
         SupportReporter $supportReporter
     ) {
-        $this->app = $app;
         $this->compat = $compat;
 
         array_map(
@@ -115,7 +108,7 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
      */
     protected function addWorker(Definition $definition, array $conn)
     {
-        $env = $this->app->environment();
+        $env = $this->compat->getEnvironment();
 
         $worker = new Container('worker');
         $worker->setBuild('.');
@@ -129,7 +122,7 @@ class DockerComposeQueueBuildStep extends DockerComposeVolumesBuildStep
             $worker->addLink($definition->getContainer('db'));
         }
 
-        $this->addVolumes($worker, $this->compat, $this->app);
+        $this->addVolumes($worker, $this->compat);
         $definition->addContainer($worker);
     }
 }

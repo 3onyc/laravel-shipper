@@ -32,6 +32,7 @@ class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBa
 
         $compat = new CompatBridge(
             '5.0',
+            $app,
             m::mock('Illuminate\Config\Repository')
                 ->shouldReceive('get')
                 ->with('shipper', null)
@@ -39,7 +40,7 @@ class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBa
                 ->getMock()
         );
 
-        return new DockerComposeApplicationBuildStep($app, $compat);
+        return new DockerComposeApplicationBuildStep($compat);
     }
 
     public function testWithoutVolumes()

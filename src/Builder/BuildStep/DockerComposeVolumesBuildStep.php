@@ -14,10 +14,9 @@ abstract class DockerComposeVolumesBuildStep implements DockerComposeBuildStepIn
      */
     protected function addVolumes(
         Container $container,
-        CompatBridge $compat,
-        \Illuminate\Foundation\Application $app
+        CompatBridge $compat
     ) {
-        $env = $app->environment();
+        $env = $compat->getEnvironment();
         $cfg = $compat->getShipperConfig();
 
         if (!in_array($env, $cfg['mount_volumes'])) {
