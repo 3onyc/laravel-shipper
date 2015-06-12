@@ -50,5 +50,5 @@ Artisan:
 
 PHPUnit:
 
-`docker-compose run --rm app vendor/bin/phpunit'
+`docker-compose run --rm app vendor/bin/phpunit`
 
