@@ -2,7 +2,7 @@ language: php
 install:
   - composer self-update
   - composer install
-  - ./test/run.sh prepare
+  - travis_wait ./test/run.sh prepare
 script: ./test/run.sh single
 php:
   - 5.6
