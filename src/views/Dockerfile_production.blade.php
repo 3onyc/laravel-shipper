@@ -13,6 +13,7 @@ RUN php -r 'readfile("https://getcomposer.org/installer");' | php -- --install-d
 ADD . /var/www/
 
 WORKDIR /var/www
+ADD {!! str_replace(base_path() . '/', '', LARAVEL_SHIPPER_ROOT) !!}/resources/nginx-hhvm.conf.tpl /etc/nginx/nginx.conf.tpl
 
 RUN cd /var/www/ && \
     composer update && \

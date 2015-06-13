@@ -2,7 +2,6 @@ FROM x3tech/nginx-hhvm:3.7.0
 MAINTAINER {!! $maintainer !!}
 
 WORKDIR /var/www
-
 ADD {!! str_replace(base_path() . '/', '', LARAVEL_SHIPPER_ROOT) !!}/resources/nginx-hhvm.conf.tpl /etc/nginx/nginx.conf.tpl
 
 # Set user to 1000 so we can map it to logged in user
