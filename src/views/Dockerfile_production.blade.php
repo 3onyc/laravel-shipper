@@ -1,4 +1,4 @@
-FROM x3tech/nginx-hhvm:3.7.0
+FROM x3tech/nginx-hhvm:3.7.1
 MAINTAINER {!! $maintainer !!}
 
 # Install dependencies
