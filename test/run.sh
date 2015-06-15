@@ -44,6 +44,13 @@ test_version() {
   do_test "${version}" test_artisan_create_docker_compose_success
   do_test "${version}" test_artisan_create_dirs_success
   do_test "${version}" test_artisan_config_publish_success
+
+  if [ -z "${TRAVIS:-}"]; then
+    # Only run these when not on Travis
+    # TODO: Run Docker on travis
+    do_test "${version}" test_production_returns_200
+    do_test "${version}" test_local_returns_200
+  fi
 }
 
 test_artisan_commands_present() {
@@ -154,6 +161,48 @@ test_artisan_config_publish_success() {
   echo -n " - ${confPath} exists... "
   ([ -f "${confPath}" ] && echo_pass && return 0) || (echo_fail && return 1)
   set -e
+}
+
+test_production_returns_200() {
+  local version="$1"
+
+  echo "# docker-compose start results in a working Laravel instance (production)"
+
+  $ARTISAN_BIN --env=production shipper:create:all > /dev/null
+  docker-compose -p "test_${version}" build
+  docker-compose -p "test_${version}" up -d
+  
+  echo -n " - returns 200... "
+  sleep 2
+
+  set +e
+  curl -ISs http://localhost:8080 | head -n1
+  local exitCode="$?"
+  set -e
+
+  docker-compose stop > /dev/null
+  ([ $exitCode -eq 0 ] && echo_pass && return 0) || (echo_fail && return 1)
+}
+
+test_local_returns_200() {
+  local version="$1"
+
+  echo "# docker-compose start results in a working Laravel instance (local)"
+
+  $ARTISAN_BIN --env=local shipper:create:all > /dev/null
+  docker-compose -p "test_${version}" build > /dev/null
+  docker-compose -p "test_${version}" up -d > /dev/null
+
+  echo -n " - returns 200... "
+  sleep 2
+
+  set +e
+  curl -ISs http://localhost:8080 | head -n1 | grep "HTTP/1.1 200 OK"
+  local exitCode="$?"
+  set -e
+
+  docker-compose stop > /dev/null
+  ([ $exitCode -eq 0 ] && echo_pass && return 0) || (echo_fail && return 1)
 }
 
 ## }}} Functional Tests
