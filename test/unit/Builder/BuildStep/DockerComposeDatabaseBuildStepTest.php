@@ -45,8 +45,10 @@ class DockerComposeDatabaseBuildStepTest extends DockerComposeBuildStepTestBase
                 )
             ))
             ->getMock();
+        $view = null;
+        $blade = m::mock('Illuminate\View\Compilers\BladeCompiler');
 
-        $compat = new CompatBridge('5.0', $app, $config);
+        $compat = new CompatBridge('5.0', $app, $config, $view, $blade);
 
         return new DockerComposeDatabaseBuildStep($compat, new SupportReporter);
     }

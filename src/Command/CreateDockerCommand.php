@@ -39,27 +39,18 @@ class CreateDockerCommand extends Command
     protected $compat;
 
     /**
-     * @var Illuminate\View\Factory|Illuminate\View\Environment
-     *
-     * Class depends on Laravel version (< 4.2 = Environment, 4.2+ = Factory)
-     */
-    protected $view;
-
-    /**
      * Create a new command instance.
      *
      * @return void
      */
     public function __construct(
         \Illuminate\Foundation\Application $app,
-        CompatBridge $compat,
-        $view
+        CompatBridge $compat
     ) {
         parent::__construct();
 
         $this->app = $app;
         $this->compat = $compat;
-        $this->view = $view;
     }
 
     /**
@@ -81,7 +72,7 @@ class CreateDockerCommand extends Command
         $view = 'shipper::Dockerfile_' . $env;
 
         $filePath = base_path() . '/Dockerfile';
-        $fileContent = $this->view->make($view, $cfg)->render();
+        $fileContent = $this->compat->renderTemplate($view, $cfg);
 
         if(file_put_contents($filePath, $fileContent) === false) {
             throw new RuntimeException(sprintf(

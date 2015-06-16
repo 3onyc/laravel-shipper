@@ -27,14 +27,22 @@ class ShipperProvider extends ServiceProvider
             'x3tech\LaravelShipper\CompatBridge'
         );
         $this->app->singleton('x3tech\LaravelShipper\CompatBridge', function($app) {
-            return new CompatBridge(Application::VERSION, $app, $app['config']);
+            return new CompatBridge(
+                Application::VERSION,
+                $app,
+                $app['config'],
+                $app['view'],
+                $app->make('view')
+                    ->getEngineResolver()
+                    ->resolve('blade')
+                    ->getCompiler()
+            );
         });
 
         $this->app->bind('laravel_shipper.command.create_docker', function($app) {
             return new CreateDockerCommand(
                 $app,
-                $app['laravel_shipper.compat_bridge'],
-                $app['view']
+                $app['laravel_shipper.compat_bridge']
             );
         });
         $this->app->bind(

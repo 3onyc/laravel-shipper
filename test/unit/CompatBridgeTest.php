@@ -23,9 +23,11 @@ class CompatBridgeTest extends PHPUnit_Framework_TestCase
             ->with('shipper::config', null)
             ->andReturn(array('4'))
             ->getMock();
+        $view = null;
+        $blade = m::mock('Illuminate\View\Compilers\BladeCompiler');
 
-        $compat4 = new CompatBridge('4.2.1', $app, $config);
-        $compat5 = new CompatBridge('5.1.0', $app, $config);
+        $compat4 = new CompatBridge('4.2.1', $app, $config, $view, $blade);
+        $compat5 = new CompatBridge('5.1.0', $app, $config, $view, $blade);
 
         $this->assertEquals(array('4'), $compat4->getShipperConfig());
         $this->assertEquals(array('5'), $compat5->getShipperConfig());

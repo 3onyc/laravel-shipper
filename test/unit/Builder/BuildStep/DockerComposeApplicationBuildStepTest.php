@@ -37,7 +37,9 @@ class DockerComposeApplicationBuildStepTest extends DockerComposeBuildStepTestBa
                 ->shouldReceive('get')
                 ->with('shipper', null)
                 ->andReturn($this->cfg)
-                ->getMock()
+                ->getMock(),
+            null,
+            m::mock('Illuminate\View\Compilers\BladeCompiler')
         );
 
         return new DockerComposeApplicationBuildStep($compat);
