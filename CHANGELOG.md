@@ -1,7 +1,7 @@
 # 0.5.0
 
 * Make laravel-shipper work with all versions of laravel
-* Add basic functional tests
+* Add functional tests
 * Use `docker-compose` instead of `fig`
 
 # 0.4.1

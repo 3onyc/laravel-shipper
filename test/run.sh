@@ -165,43 +165,44 @@ test_artisan_config_publish_success() {
 
 test_production_returns_200() {
   local version="$1"
+  local projectName="test_${version}_prod"
 
   echo "# docker-compose start results in a working Laravel instance (production)"
 
   $ARTISAN_BIN --env=production shipper:create:all > /dev/null
-  docker-compose -p "test_${version}" build
-  docker-compose -p "test_${version}" up -d
+  docker-compose -p "${projectName}" build > /dev/null
+  docker-compose -p "${projectName}" up -d > /dev/null
   
   echo -n " - returns 200... "
   sleep 2
 
   set +e
-  curl -ISs http://localhost:8080 | head -n1
+  curl -ISs --fail http://localhost:8080 > /dev/null
   local exitCode="$?"
   set -e
 
-  docker-compose stop > /dev/null
+  docker-compose -p "${projectName}" stop &> /dev/null
   ([ $exitCode -eq 0 ] && echo_pass && return 0) || (echo_fail && return 1)
 }
-
-test_local_returns_200() {
+test_local_returns_200() { local version="$1"
   local version="$1"
+  local projectName="test_${version}_local"
 
   echo "# docker-compose start results in a working Laravel instance (local)"
 
   $ARTISAN_BIN --env=local shipper:create:all > /dev/null
-  docker-compose -p "test_${version}" build > /dev/null
-  docker-compose -p "test_${version}" up -d > /dev/null
+  docker-compose -p "${projectName}" build > /dev/null
+  docker-compose -p "${projectName}" up -d > /dev/null
 
   echo -n " - returns 200... "
   sleep 2
 
   set +e
-  curl -ISs http://localhost:8080 | head -n1 | grep "HTTP/1.1 200 OK"
+  curl -ISs --fail http://localhost:8080 > /dev/null
   local exitCode="$?"
   set -e
 
-  docker-compose stop > /dev/null
+  docker-compose -p "${projectName}" stop &> /dev/null
   ([ $exitCode -eq 0 ] && echo_pass && return 0) || (echo_fail && return 1)
 }
 
