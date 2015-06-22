@@ -1,6 +1,6 @@
 # Laravel Shipper
 
-Integrating Laravel, Docker and Fig
+Integrating Laravel, Docker and Docker-Compose
 
 ## Requirements
 
