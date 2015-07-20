@@ -61,6 +61,10 @@ class ShipperProvider extends ServiceProvider
             'laravel_shipper.command.check',
             'x3tech\LaravelShipper\Command\CheckCommand'
         );
+        $this->app->bind(
+            'laravel_shipper.command.shell',
+            'x3tech\LaravelShipper\Command\ShellCommand'
+        );
 
         $this->app->singleton(
             'x3tech\LaravelShipper\Builder\DockerComposeBuilder'
@@ -116,6 +120,7 @@ class ShipperProvider extends ServiceProvider
         $this->commands('laravel_shipper.command.create_dirs');
         $this->commands('laravel_shipper.command.create_all');
         $this->commands('laravel_shipper.command.check');
+        $this->commands('laravel_shipper.command.shell');
 
         $this->initDockerComposeBuilder();
     }
