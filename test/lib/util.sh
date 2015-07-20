@@ -17,7 +17,7 @@ get_versions_to_test() {
     5.4.*)
       echo "4.0 4.1 4.2 5.0"
       ;;
-    5.*|HHVM)
+    5.*|7.*|HHVM)
       echo "4.0 4.1 4.2 5.0 5.1"
   esac
 }
