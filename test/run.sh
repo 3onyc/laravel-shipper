@@ -165,7 +165,7 @@ test_artisan_config_publish_success() {
 
 test_production_returns_200() {
   local version="$1"
-  local projectName="test_${version}_prod"
+  local projectName="test${version}prod"
 
   echo "# docker-compose start results in a working Laravel instance (production)"
 
@@ -184,9 +184,9 @@ test_production_returns_200() {
   docker-compose -p "${projectName}" stop &> /dev/null
   ([ $exitCode -eq 0 ] && echo_pass && return 0) || (echo_fail && return 1)
 }
-test_local_returns_200() { local version="$1"
+test_local_returns_200() {
   local version="$1"
-  local projectName="test_${version}_local"
+  local projectName="test${version}local"
 
   echo "# docker-compose start results in a working Laravel instance (local)"
 
