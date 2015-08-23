@@ -1,4 +1,4 @@
-FROM x3tech/nginx-hhvm:3.7.1
+FROM {!! $hhvm_image !!}
 MAINTAINER {!! $maintainer !!}
 
 # Install dependencies
@@ -13,8 +13,7 @@ RUN php -r 'readfile("https://getcomposer.org/installer");' | php -- --install-d
 ADD . /var/www/
 
 WORKDIR /var/www
-ADD {!! str_replace(base_path() . '/', '', LARAVEL_SHIPPER_ROOT) !!}/resources/nginx-hhvm.conf.tpl /etc/nginx/nginx.conf.tpl
 
 RUN cd /var/www/ && \
-    composer install && \
+    composer update && \
     chown -R www-data:www-data /var/www/

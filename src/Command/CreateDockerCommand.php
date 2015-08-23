@@ -69,7 +69,7 @@ class CreateDockerCommand extends Command
 
     protected function createDockerFile(array $cfg, $env)
     {
-        $view = 'shipper::Dockerfile_' . $env;
+        $view = sprintf('shipper::Dockerfile_%s_%s', $cfg['type'], $env);
 
         $filePath = base_path() . '/Dockerfile';
         $fileContent = $this->compat->renderTemplate($view, $cfg);

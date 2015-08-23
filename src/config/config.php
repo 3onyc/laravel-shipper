@@ -1,6 +1,9 @@
 <?php
 return array(
     'maintainer'    => 'Foo <foo@acme.tld>',
+    'type'          => 'hhvm',
+    'php_image'     => 'x3tech/nginx-php:5.5',
+    'hhvm_image'    => 'x3tech/nginx-hhvm:3.7.0',
     'port'          => 8080,
     'uid'           => 1000,
     'mount_volumes' => array('local'),
