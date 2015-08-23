@@ -69,10 +69,20 @@ class CreateDockerCommand extends Command
 
     protected function createDockerFile(array $cfg, $env)
     {
+
+        // Add newlines to work around PHP eating them
+        // (See https://github.com/laravel/framework/issues/463)
+        $cfgNewLine = $cfg;
+        foreach ($cfgNewLine as $key => $value) {
+            if (in_array($key, array('hhvm_image', 'php_image', 'maintainer'))) {
+                $cfgNewLine[$key] = $value . "\n";
+            }
+        }
+
         $view = sprintf('shipper::Dockerfile_%s_%s', $cfg['type'], $env);
 
         $filePath = base_path() . '/Dockerfile';
-        $fileContent = $this->compat->renderTemplate($view, $cfg);
+        $fileContent = $this->compat->renderTemplate($view, $cfgNewLine);
 
         if(file_put_contents($filePath, $fileContent) === false) {
             throw new RuntimeException(sprintf(
