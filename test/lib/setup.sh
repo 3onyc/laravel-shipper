@@ -7,7 +7,7 @@ cleanup() {
 create_versions() {
   local laravelVersions="$(get_versions_to_test "${PHP_VERSION}")"
 
-  [ -d "${PROJECT_DIR}/vendor" ] || (cd "${PROJECT_DIR}" && composer install)
+  [ -d "${PROJECT_DIR}/vendor" ] || (cd "${PROJECT_DIR}" && composer install --no-interaction)
   for version in $laravelVersions; do
     create_version "${version}"
   done
