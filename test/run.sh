@@ -7,24 +7,60 @@ source test/lib/setup.sh
 
 ## Vars {{{
 
-# PHP version detection
-if [ -z "${PHP_VERSION:-}" -a -z "${PHP_BIN:-}" ]; then
-  readonly PHP_VERSION="$(php -r 'echo phpversion();')"
-  readonly PHP_BIN="$(which php)"
-fi
-
-readonly COMPOSER_BIN="$(which composer)"
-readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
-
-readonly PROJECT_DIR="$(pwd)"
-
-# Directory to put installs in for functional tests
-readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
-readonly FUNC_TEST_CACHE_DIR="${PROJECT_DIR}/test/functional/_cache"
-
 # Branch to initially install from (Will later be copied over by sync_shipper)
 readonly BRANCH="develop"
 ## }}} Vars
+
+## Utility {{{
+check_rsync() {
+  which rsync &> /dev/null || (echo "Can't find rsync in PATH" && exit 1)
+}
+
+check_docker() {
+  which docker &> /dev/null || (echo "Can't find docker in PATH" && exit 1)
+  which docker-compose &> /dev/null || (echo "Can't find docker-compose in PATH" && exit 1)
+}
+
+check_and_set_php_version() {
+  which php &> /dev/null || (echo "Can't find php in PATH" && exit 1)
+
+  if [ -z "${PHP_VERSION:-}" -a -z "${PHP_BIN:-}" ]; then
+    readonly PHP_VERSION="$(php -r 'echo phpversion();')"
+    readonly PHP_BIN="$(which php)"
+  fi
+
+  if ! extension_loaded "mcrypt"; then
+    echo "Missing extension: mcrypt" && exit 1
+  fi
+}
+
+check_and_set_composer_bin() {
+  which composer &> /dev/null || (echo "Can't find composer in PATH" && exit 1)
+  readonly COMPOSER_BIN="php $(which composer)"
+}
+
+set_artisan_bin() {
+  readonly ARTISAN_BIN="${PHP_BIN} ./artisan"
+}
+
+set_project_dirs() {
+  readonly PROJECT_DIR="$(pwd)"
+
+  # Directory to put installs in for functional tests
+  readonly FUNC_TEST_DIR="${PROJECT_DIR}/test/functional/_test"
+  readonly FUNC_TEST_CACHE_DIR="${PROJECT_DIR}/test/functional/_cache"
+}
+
+set_vars() {
+  check_rsync
+  check_docker
+  check_and_set_php_version
+  check_and_set_composer_bin
+  set_artisan_bin
+  set_project_dirs
+}
+
+## }}} Utility
 
 ## Functional Tests {{{
 test_versions() {
@@ -244,4 +280,6 @@ main() {
   esac
 }
 
+
+set_vars
 main "$@"

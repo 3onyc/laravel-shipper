@@ -79,3 +79,12 @@ fix_db_conf() {
     sed -i "s/=> 'localhost'/=> 'db'/g" "$(get_conf_file "${version}" "database.php")"
   fi
 }
+
+extension_loaded() {
+  local extensionName="$1"
+  if [ -z "$("$PHP_BIN" -r "echo extension_loaded('$extensionName');")" ]; then
+    return 1
+  else
+    return 0
+  fi
+}
