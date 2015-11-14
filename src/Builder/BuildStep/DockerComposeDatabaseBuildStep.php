@@ -105,7 +105,7 @@ class DockerComposeDatabaseBuildStep implements DockerComposeBuildStepInterface
             'MYSQL_DATABASE' => $conn['database'],
             'MYSQL_USER' => $conn['username'],
             'MYSQL_PASSWORD' => $conn['password'],
-            'MYSQL_ALLOW_EMPTY_PASSWORD' => true
+            'MYSQL_ALLOW_EMPTY_PASSWORD' => 'true' // Environment should always be string
         ));
         return $db;
     }
