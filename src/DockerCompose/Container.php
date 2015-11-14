@@ -126,6 +126,16 @@ class Container
     public function setEnvironment(array $vars)
     {
         foreach ($vars as $key => $value) {
+            if (!is_string($key) || !is_string($value)) {
+                throw new InvalidArgumentException(sprintf(
+                    "'key' or 'value' isn't a string ((%s)'%s': (%s)'%s')",
+                    gettype($key),
+                    $key,
+                    gettype($value),
+                    $value
+                ));
+            }
+
             $this->environment[$key] = $value;
         }
     }
